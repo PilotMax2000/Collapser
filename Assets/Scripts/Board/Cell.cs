@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEditorInternal;
 using UnityEngine;
@@ -8,18 +9,20 @@ namespace Collapser
     public class Cell
     {
         private Vector2Int _boardPos;
-        private bool _isEmpty = true;
+        private bool _isEmpty;
         private Block _block;
+        private Action<Cell> _onClick;
         public Block Block => _block;
         public bool IsEmpty => _isEmpty;
         public Vector2Int BoardPos => _boardPos;
         public int BoardX => _boardPos.x;
         public int BoardY => _boardPos.y;
 
-        public Cell(Vector2Int boardPos)
+        public Cell(Vector2Int boardPos, Action<Cell> onClick)
         {
             _boardPos = boardPos;
             _isEmpty = true;
+            _onClick = onClick;
         }
         
         // public Cell(int xPos, int yPos, Block block)
@@ -52,6 +55,8 @@ namespace Collapser
             _block = null;
             _isEmpty = true;
         }
+        
+        
         
     }
 

@@ -13,6 +13,8 @@ namespace Collapser
         [SerializeField] private List<BlockParams> _mapToLoad = new List<BlockParams>(9);
         [SerializeField] private BlocksToSpawn _toSpawn;
 
+        [SerializeField] private VisualBoard _visualBoard;
+
         private Cell[,] _map;
         private Node[,] _graph;
 
@@ -27,10 +29,22 @@ namespace Collapser
             {
                 for (int x = 0; x < _sizeX; x++)
                 {
-                    _map[x,y] = new Cell(new Vector2Int(x,y));
+                    _map[x,y] = new Cell(new Vector2Int(x,y), OnCellClick);
                     _map[x,y].SetNewBlock(_mapToLoad[mapLoaderCounter]);
                     mapLoaderCounter++;
                 }
+            }
+        }
+
+        private void OnCellClick(Cell cell)
+        {
+            List<Block> resBlocks = SearchColorLink(cell.Block);
+            if (resBlocks != null && resBlocks.Count >= 2)
+            {
+                RemoveBlocks(resBlocks);
+                //TODO:Send events for destruction
+                //TODO:Move to visual events
+                _visualBoard.UpdateBoard();
             }
         }
 
@@ -95,12 +109,6 @@ namespace Collapser
 					_graph[x,y].Neighbours.Add( _graph[x, y+1] );
                 }
             }
-        }
-
-        //TODO: remove after adding proper taiing
-        private void OnClick(BlockColor color, int x, int y)
-        {
-            
         }
 
         public List<Block> SearchColorLink(Block block)
@@ -208,13 +216,16 @@ namespace Collapser
         void Start()
         {
             GenerateMap();
-            LogMap();
             GeneratePathfindingGraph();
-            RemoveBlocks(SearchColorLink(_map[0,0].Block));
-            GravitationSimulationShift();
+            _visualBoard.GenerateBoard(_map);
+            
             LogMap();
-            GenerateBlocks();
-            LogMap();
+          //  GeneratePathfindingGraph();
+          //  RemoveBlocks(SearchColorLink(_map[0,0].Block));
+           // GravitationSimulationShift();
+           // LogMap();
+            //GenerateBlocks();
+            //LogMap();
         }
 
         // Update is called once per frame

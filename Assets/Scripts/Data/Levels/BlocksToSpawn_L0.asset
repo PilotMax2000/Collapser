@@ -12,4 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 06dde5e31b821e046b339b0f6561791f, type: 3}
   m_Name: BlocksToSpawn_L0
   m_EditorClassIdentifier: 
-  ToSpawn: []
+  ToSpawn:
+  - {fileID: 11400000, guid: c66c88983a5f39e4bad101ee16a29760, type: 2}
+  - {fileID: 11400000, guid: 043c11d964094ff45bec0ab499c75f20, type: 2}
+  - {fileID: 11400000, guid: 07f72243190a00a45ad221c0f03d062d, type: 2}

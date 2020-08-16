@@ -13,3 +13,4 @@ MonoBehaviour:
   m_Name: RedBlock
   m_EditorClassIdentifier: 
   Color: {fileID: 11400000, guid: 63d262de8f0c8fd4cbd672c630cbc445, type: 2}
+  Sprite: {fileID: 21300000, guid: dfa47de0394a83b47953ceff700ff0c2, type: 3}

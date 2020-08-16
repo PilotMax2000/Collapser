@@ -9,5 +9,6 @@ namespace Collapser
     public class BlockParams : ScriptableObject
     {
         public BlockColor Color;
+        public Sprite Sprite;
     }
 }

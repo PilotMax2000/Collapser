@@ -13,3 +13,4 @@ MonoBehaviour:
   m_Name: BlueBlock
   m_EditorClassIdentifier: 
   Color: {fileID: 11400000, guid: d283c27ff84b30544b86005aeb04aeb7, type: 2}
+  Sprite: {fileID: 21300000, guid: 30c7f7ca570138e4481ac92319da5051, type: 3}

@@ -13,3 +13,4 @@ MonoBehaviour:
   m_Name: GreenBlock
   m_EditorClassIdentifier: 
   Color: {fileID: 11400000, guid: e30877ed24c7b8c47a1b700745186d93, type: 2}
+  Sprite: {fileID: 21300000, guid: eb6fc4a9eacccad4aba5c255170683ab, type: 3}

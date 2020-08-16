@@ -27,11 +27,24 @@ namespace Collapser
             {
                 for (int x = 0; x < _sizeX; x++)
                 {
-                    _map[x,y] = new Cell(x,y);
+                    _map[x,y] = new Cell(new Vector2Int(x,y));
                     _map[x,y].SetNewBlock(_mapToLoad[mapLoaderCounter]);
                     mapLoaderCounter++;
                 }
             }
+        }
+
+        private Cell GetCell(Vector2Int pos)
+        {
+            if(pos.x >= 0 && pos.x < _sizeX)
+            {
+                if (pos.y >= 0 && pos.y < _sizeY)
+                {
+                    return _map[pos.x, pos.y];
+                }
+            }
+            Debug.LogError($"Cell for {pos} was not found in board map!");
+            return null;
         }
         
         //TODO: remove, only for debug purpose
@@ -63,7 +76,7 @@ namespace Collapser
             // Initialize a Node for each spot in the array
             for(int x=0; x < _sizeX; x++) {
                 for(int y=0; y < _sizeY; y++) {
-                    _graph[x,y] = new Node(x,y);
+                    _graph[x,y] = new Node(new Vector2Int(x,y));
                 }
             }
 
@@ -98,12 +111,12 @@ namespace Collapser
             var currentBlock = block;
             
             foundBlocks.Add(currentBlock);
-            foreach (var node in _graph[currentBlock.Cell.X, currentBlock.Cell.Y].Neighbours)
+            foreach (var node in _graph[currentBlock.Cell.BoardX, currentBlock.Cell.BoardY].Neighbours)
             {
-                if (_map[node.X, node.Y].Block.BlockParams.Color == currentBlock.BlockParams.Color
-                    && toSearchIn.Contains(_map[node.X, node.Y].Block) == false)
+                if (GetCell(node.Pos).Block.BlockParams.Color == currentBlock.BlockParams.Color
+                    && toSearchIn.Contains(GetCell(node.Pos).Block) == false)
                 {
-                    toSearchIn.Add(_map[node.X, node.Y].Block);
+                    toSearchIn.Add(GetCell(node.Pos).Block);
                 }
             }
 
@@ -111,13 +124,13 @@ namespace Collapser
             {
                 currentBlock = toSearchIn[toSearchIn.Count - 1];
                 foundBlocks.Add(currentBlock);
-                foreach (var node in _graph[currentBlock.Cell.X, currentBlock.Cell.Y].Neighbours)
+                foreach (var node in _graph[currentBlock.Cell.BoardX, currentBlock.Cell.BoardY].Neighbours)
                 {
-                    if (_map[node.X, node.Y].Block.BlockParams.Color == currentBlock.BlockParams.Color
-                        && toSearchIn.Contains(_map[node.X, node.Y].Block) == false
-                        && foundBlocks.Contains(_map[node.X, node.Y].Block) == false)
+                    if (GetCell(node.Pos).Block.BlockParams.Color == currentBlock.BlockParams.Color
+                        && toSearchIn.Contains(GetCell(node.Pos).Block) == false
+                        && foundBlocks.Contains(GetCell(node.Pos).Block) == false)
                     {
-                        toSearchIn.Add(_map[node.X, node.Y].Block);
+                        toSearchIn.Add(GetCell(node.Pos).Block);
                     }
                 }
 

@@ -6,8 +6,6 @@ namespace Collapser
 {
     public class Block
     {
-        private int _x;
-        private int _y;
         private Cell _cell;
         private BlockParams _blockParams;
         public BlockParams BlockParams => _blockParams;

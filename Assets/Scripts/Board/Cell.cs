@@ -7,19 +7,18 @@ namespace Collapser
 {
     public class Cell
     {
-        private int _x;
-        private int _y;
+        private Vector2Int _boardPos;
         private bool _isEmpty = true;
         private Block _block;
         public Block Block => _block;
-        public int X => _x;
-        public int Y => _y;
         public bool IsEmpty => _isEmpty;
+        public Vector2Int BoardPos => _boardPos;
+        public int BoardX => _boardPos.x;
+        public int BoardY => _boardPos.y;
 
-        public Cell(int xPos, int yPos)
+        public Cell(Vector2Int boardPos)
         {
-            _x = xPos;
-            _y = yPos;
+            _boardPos = boardPos;
             _isEmpty = true;
         }
         

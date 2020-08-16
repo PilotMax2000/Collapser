@@ -4,17 +4,17 @@ using UnityEngine;
 
 public class Node
 {
-    private int _x;
-    private int _y;
-    public int X => _x;
-    public int Y => _y;
+    
+    private Vector2Int _pos;
+    public Vector2Int Pos => _pos;
+    public int PosX => _pos.x;
+    public int PosY => _pos.y;
 
     public List<Node> Neighbours;
 
-    public Node(int x, int y)
+    public Node(Vector2Int pos )
     {
         Neighbours = new List<Node>();
-        _x = x;
-        _y = y;
+        _pos = pos;
     }
 }

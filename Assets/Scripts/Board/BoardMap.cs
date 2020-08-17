@@ -13,10 +13,23 @@ namespace Collapser
         [SerializeField] private List<BlockParams> _mapToLoad = new List<BlockParams>(9);
         [SerializeField] private BlocksToSpawn _toSpawn;
 
-        [SerializeField] private VisualBoard _visualBoard;
+        [Header("Bridge")] 
+        [SerializeField] private BoardsBridge _boardsBridge;
+
+        //[SerializeField] private VisualBoard _visualBoard;
 
         private Cell[,] _map;
         private Node[,] _graph;
+
+        public Cell[,] Map => _map;
+
+        private void Awake()
+        {
+            GenerateMap();
+            GeneratePathfindingGraph();
+            LogMap();
+            _boardsBridge.InitLogicBoard(this);
+        }
 
         private void GenerateMap()
         {
@@ -29,14 +42,15 @@ namespace Collapser
             {
                 for (int x = 0; x < _sizeX; x++)
                 {
-                    _map[x,y] = new Cell(new Vector2Int(x,y), OnCellClick);
+                    _map[x,y] = new Cell(new Vector2Int(x,y), _boardsBridge);
                     _map[x,y].SetNewBlock(_mapToLoad[mapLoaderCounter]);
                     mapLoaderCounter++;
                 }
             }
         }
 
-        private void OnCellClick(Cell cell)
+        //TODO: separete in different functions 
+        public void RemoveBlocksWithSameColor(Cell cell)
         {
             List<Block> resBlocks = SearchColorLink(cell.Block);
             if (resBlocks != null && resBlocks.Count >= 2)
@@ -44,11 +58,16 @@ namespace Collapser
                 RemoveBlocks(resBlocks);
                 //TODO:Send events for destruction
                 //TODO:Move to visual events
-                _visualBoard.UpdateBoard();
+                //_visualBoard.UpdateBoard();
             }
+            GravitationSimulationShift();
+            LogMap();
+            GenerateNewBlocks();
+            LogMap();
+            
         }
 
-        private Cell GetCell(Vector2Int pos)
+        public Cell GetCell(Vector2Int pos)
         {
             if(pos.x >= 0 && pos.x < _sizeX)
             {
@@ -121,6 +140,10 @@ namespace Collapser
             foundBlocks.Add(currentBlock);
             foreach (var node in _graph[currentBlock.Cell.BoardX, currentBlock.Cell.BoardY].Neighbours)
             {
+                if (GetCell(node.Pos).IsEmpty)
+                {
+                    continue;
+                }
                 if (GetCell(node.Pos).Block.BlockParams.Color == currentBlock.BlockParams.Color
                     && toSearchIn.Contains(GetCell(node.Pos).Block) == false)
                 {
@@ -134,6 +157,10 @@ namespace Collapser
                 foundBlocks.Add(currentBlock);
                 foreach (var node in _graph[currentBlock.Cell.BoardX, currentBlock.Cell.BoardY].Neighbours)
                 {
+                    if (GetCell(node.Pos).IsEmpty)
+                    {
+                        continue;
+                    }
                     if (GetCell(node.Pos).Block.BlockParams.Color == currentBlock.BlockParams.Color
                         && toSearchIn.Contains(GetCell(node.Pos).Block) == false
                         && foundBlocks.Contains(GetCell(node.Pos).Block) == false)
@@ -177,9 +204,13 @@ namespace Collapser
 
         private void SwapBlockFromTo(Cell fromCell, Cell toCell)
         {
+            //TODO: Fix bug with> 2 empty cells in a row!!!
             var block = fromCell.Block;
-            fromCell.RemoveBlock();
+            fromCell.UnbindBlock();
             toCell.SetBlock(block);
+            _boardsBridge.SendVisualBoardAction(() => _boardsBridge.VisualBoard.SwapBlockFromTo
+            (_boardsBridge.GetVisualCell(fromCell),
+                _boardsBridge.GetVisualCell(toCell)));
         }
 
         private void DoForEachCell(Action<int,int> test)
@@ -197,7 +228,7 @@ namespace Collapser
             }
         }
 
-        private void GenerateBlocks()
+        private void GenerateNewBlocks()
         {
             for (int y = 0; y < _sizeY; y++)
             {
@@ -215,11 +246,11 @@ namespace Collapser
         // Start is called before the first frame update
         void Start()
         {
-            GenerateMap();
-            GeneratePathfindingGraph();
-            _visualBoard.GenerateBoard(_map);
+           // GenerateMap();
+          //  GeneratePathfindingGraph();
+            //_visualBoard.GenerateBoard(_map);
             
-            LogMap();
+          //  LogMap();
           //  GeneratePathfindingGraph();
           //  RemoveBlocks(SearchColorLink(_map[0,0].Block));
            // GravitationSimulationShift();

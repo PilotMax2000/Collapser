@@ -22,6 +22,11 @@ namespace Collapser
             _cell = parentCell;
         }
 
+        public void BindBlockToNewCell(Cell parentCell)
+        {
+            _cell = parentCell;
+        }
+
         private void OnRemove()
         {
             

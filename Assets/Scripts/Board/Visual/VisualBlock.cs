@@ -9,10 +9,12 @@ namespace Collapser
     {
         private Block _blockLink;
         private SpriteRenderer _sr;
+        [SerializeField] private BlockParams _blockParams;
 
         public void Init(Block block)
         {
             _blockLink = block;
+            _blockParams = block.BlockParams;
             //Init picture
         }
 

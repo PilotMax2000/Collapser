@@ -465,7 +465,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 07f72243190a00a45ad221c0f03d062d, type: 2}
   - {fileID: 11400000, guid: 07f72243190a00a45ad221c0f03d062d, type: 2}
   _toSpawn: {fileID: 11400000, guid: 2ba80f95930014c448ba1e446a370d30, type: 2}
-  _visualBoard: {fileID: 1578463194}
+  _boardsBridge: {fileID: 11400000, guid: 1bb96a0c270f24b43a216526c6b524b4, type: 2}
 --- !u!4 &1432392488
 Transform:
   m_ObjectHideFlags: 0
@@ -515,6 +515,7 @@ MonoBehaviour:
     type: 3}
   _blockPref: {fileID: 2780702026397386228, guid: f258d24291b08aa4398064ef0fb66985,
     type: 3}
+  _boardsBridge: {fileID: 11400000, guid: 1bb96a0c270f24b43a216526c6b524b4, type: 2}
 --- !u!4 &1578463195
 Transform:
   m_ObjectHideFlags: 0

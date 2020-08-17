@@ -17,12 +17,13 @@ namespace Collapser
         public Vector2Int BoardPos => _boardPos;
         public int BoardX => _boardPos.x;
         public int BoardY => _boardPos.y;
+        private BoardsBridge _boardsBridge;
 
-        public Cell(Vector2Int boardPos, Action<Cell> onClick)
+        public Cell(Vector2Int boardPos, BoardsBridge boardsBridge)
         {
             _boardPos = boardPos;
             _isEmpty = true;
-            _onClick = onClick;
+            _boardsBridge = boardsBridge;
         }
         
         // public Cell(int xPos, int yPos, Block block)
@@ -35,6 +36,7 @@ namespace Collapser
         public void SetBlock(Block block)
         {
             _block = block;
+            _block.BindBlockToNewCell(this);
             if (_block != null)
             {
                 _isEmpty = false;
@@ -48,16 +50,27 @@ namespace Collapser
             {
                 _isEmpty = false;
             }
+
+            if (_boardsBridge.VisualBoard == null)
+            {
+                return;
+            }
+            _boardsBridge.SendVisualBoardAction(() => _boardsBridge.VisualBoard.SetNewBlock(this));
         }
 
         public void RemoveBlock()
         {
             _block = null;
             _isEmpty = true;
+            _boardsBridge.SendVisualBoardAction(_boardsBridge.GetVisualCell(this).RemoveBlock);
         }
-        
-        
-        
+
+        public void UnbindBlock()
+        {
+            _block.BindBlockToNewCell(null);
+            _block = null;
+            _isEmpty = true;
+        }
     }
 
 }

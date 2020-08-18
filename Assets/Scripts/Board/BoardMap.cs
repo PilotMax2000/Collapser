@@ -188,15 +188,36 @@ namespace Collapser
 
         private void GravitationSimulationShift()
         {
-            //-1 because we want to shift all existing elements before the generation of new one
-            for (int y = 0; y < _sizeY-1; y++)
+            for (int x = 0; x < _sizeX; x++)
             {
-                for (int x = 0; x < _sizeX; x++)
+                int lastFixedBlock = -1;
+                int currentIndex = 0;
+                while (currentIndex < _sizeY - 1)
                 {
-                    //TODO:fix this - will work only if EVERY cell has block (no empty/dead cells on level)
-                    if (_map[x, y].IsEmpty)
+                    if (_map[x, currentIndex].IsEmpty == false)
                     {
-                        SwapBlockFromTo(_map[x, y+1], _map[x, y]);
+                        lastFixedBlock = currentIndex;
+                        currentIndex++;
+                        continue;
+                    }
+                    
+                    if (_map[x, currentIndex].IsEmpty && _map[x, currentIndex+1].IsEmpty == false)
+                    {
+                        if (currentIndex - 1 != lastFixedBlock)
+                        {
+                            SwapBlockFromTo(_map[x, currentIndex+1], _map[x, lastFixedBlock+1]);
+                            lastFixedBlock++;
+                        }
+                        else
+                        {
+                            SwapBlockFromTo(_map[x, currentIndex+1], _map[x, currentIndex]);
+                            lastFixedBlock = currentIndex;
+                        }
+                        currentIndex++;
+                    }
+                    else if (_map[x, currentIndex].IsEmpty && _map[x, currentIndex+1].IsEmpty)
+                    {
+                        currentIndex++;
                     }
                 }
             }

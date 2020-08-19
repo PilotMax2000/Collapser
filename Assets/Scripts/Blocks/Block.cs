@@ -27,9 +27,5 @@ namespace Collapser
             _cell = parentCell;
         }
 
-        private void OnRemove()
-        {
-            
-        }
     }
 }

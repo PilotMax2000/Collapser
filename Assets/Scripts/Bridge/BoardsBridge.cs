@@ -9,11 +9,7 @@ public class BoardsBridge : ScriptableObject
 {
     private BoardMap _boardMap;
     private VisualBoard _visualBoard;
-
-    //public BoardMap BoardMap => _boardMap;
-
-    //public VisualBoard VisualBoard => _visualBoard;
-
+    
     public void InitLogicBoard(BoardMap boardMap)
     {
         _boardMap = boardMap;
@@ -37,21 +33,10 @@ public class BoardsBridge : ScriptableObject
         }
     }
 
-    // public void SendVisualBoardAction(Action visualAction)
-    // {
-    //     visualAction.Invoke();
-    // }
-    //
-    // public void SendLogicBoardAction(Action logicAction)
-    // {
-    //     logicAction.Invoke();
-    // }
-
     public void LogicActionOnClicked(Vector2Int boardPos)
     {
         _boardMap.OnClickReaction(_boardMap.GetCell(boardPos));
     }
-
 
     public void VisualActionSwapBlocks(Vector2Int from, Vector2Int to)
     {

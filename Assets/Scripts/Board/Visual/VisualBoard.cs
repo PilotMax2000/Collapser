@@ -25,18 +25,11 @@ namespace Collapser
             _boardsBridge.InitVisualBoard(this);
         }
 
-        private void Start()
-        {
-            //GenerateBoard(_boardsBridge.BoardMap.Map);
-        }
-
         public void SetCells(Cell[,] cells)
         {
             _cells = cells;
         }
-
-
-
+        
         public void GenerateBoard(Cell[,] boardCells)
         {
             _sizeX = boardCells.GetLength(0);
@@ -92,28 +85,12 @@ namespace Collapser
             return null;
         }
 
-        public void GravitationShift()
-        {
-            
-        }
-        
         //TODO: Animate this!!!
         public void SwapBlockFromTo(VisualCell from, VisualCell to)
         {
             var block = from.VisualBlock;
             from.UnbindBlock();
             to.SetBlock(block);
-        }
-
-        //TODO: Add to game event system
-        public void UpdateBoard()
-        {
-        
-        }
-
-        private void CreateBlock()
-        {
-        
         }
     }
 

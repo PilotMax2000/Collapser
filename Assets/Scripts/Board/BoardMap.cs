@@ -16,8 +16,6 @@ namespace Collapser
         [Header("Bridge")] 
         [SerializeField] private BoardsBridge _boardsBridge;
 
-        //[SerializeField] private VisualBoard _visualBoard;
-
         private Cell[,] _map;
         private Node[,] _graph;
 
@@ -38,17 +36,6 @@ namespace Collapser
         
         void Start()
         {
-            // GenerateMap();
-            //  GeneratePathfindingGraph();
-            //_visualBoard.GenerateBoard(_map);
-            
-            //  LogMap();
-            //  GeneratePathfindingGraph();
-            //  RemoveBlocks(SearchColorLink(_map[0,0].Block));
-            // GravitationSimulationShift();
-            // LogMap();
-            //GenerateBlocks();
-            //LogMap();
             _boardsBridge.GenerateVisualMap();
         }
 
@@ -257,9 +244,6 @@ namespace Collapser
             fromCell.UnbindBlock();
             toCell.SetBlock(block);
             _boardsBridge.VisualActionSwapBlocks(fromCell.BoardPos, toCell.BoardPos);
-            // _boardsBridge.SendVisualBoardAction(() => _boardsBridge.VisualBoard.SwapBlockFromTo
-            // (_boardsBridge.GetVisualCell(fromCell),
-            //     _boardsBridge.GetVisualCell(toCell)));
         }
 
         private void DoForEachCell(Action<int,int> test)
@@ -290,10 +274,6 @@ namespace Collapser
                 }
             }
         }
-
-
-      
-
     }
 }
 

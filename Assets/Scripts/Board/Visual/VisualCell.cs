@@ -46,18 +46,6 @@ namespace Collapser
             Debug.Log($"[OnClick] Player clicked cell{_boardPos}");
             _boardsBridge.LogicActionOnClicked(_boardPos);
         }
-
-        // Start is called before the first frame update
-        void Start()
-        {
-        
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
-        
-        }
     }
 
 }

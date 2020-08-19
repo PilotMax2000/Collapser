@@ -25,13 +25,6 @@ namespace Collapser
             _isEmpty = true;
             _boardsBridge = boardsBridge;
         }
-        
-        // public Cell(int xPos, int yPos, Block block)
-        // {
-        //     _x = xPos;
-        //     _y = yPos;
-        //     _block = block;
-        // }
 
         public void SetBlock(Block block)
         {
@@ -55,10 +48,6 @@ namespace Collapser
             {
                 return;
             }
-            // if (_boardsBridge.VisualBoard == null)
-            // {
-            //     return;
-            // }
             _boardsBridge.VisualActionSetNewBlock(_boardPos, _block);
         }
 

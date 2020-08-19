@@ -15,7 +15,6 @@ namespace Collapser
         {
             _blockLink = block;
             _blockParams = block.BlockParams;
-            //Init picture
         }
 
         private void Awake()
@@ -27,12 +26,6 @@ namespace Collapser
         void Start()
         {
             _sr.sprite = _blockLink.BlockParams.Sprite;
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
-        
         }
     }
 

@@ -10,13 +10,18 @@ public class BoardsBridge : ScriptableObject
     private BoardMap _boardMap;
     private VisualBoard _visualBoard;
 
-    public BoardMap BoardMap => _boardMap;
+    //public BoardMap BoardMap => _boardMap;
 
-    public VisualBoard VisualBoard => _visualBoard;
+    //public VisualBoard VisualBoard => _visualBoard;
 
     public void InitLogicBoard(BoardMap boardMap)
     {
         _boardMap = boardMap;
+        if (boardMap != null)
+        {
+            Debug.Log("Logic Board was registered in  bridge");
+            _boardMap.Init();
+        }
     }
 
     public void InitVisualBoard(VisualBoard visualBoard)
@@ -24,48 +29,44 @@ public class BoardsBridge : ScriptableObject
         _visualBoard = visualBoard;
     }
 
-    private void OnEnable()
+    public void GenerateVisualMap()
     {
-        _boardMap.Init();
-        if (_boardMap == null)
+        if (_visualBoard != null && _boardMap != null)
         {
-            Debug.Log("!!");
-        }
-        else
-        {
-            Debug.Log("git");
+            _visualBoard.GenerateBoard(_boardMap.Map);
         }
     }
 
-    public Cell[,] GetMapCells()
+    // public void SendVisualBoardAction(Action visualAction)
+    // {
+    //     visualAction.Invoke();
+    // }
+    //
+    // public void SendLogicBoardAction(Action logicAction)
+    // {
+    //     logicAction.Invoke();
+    // }
+
+    public void LogicActionOnClicked(Vector2Int boardPos)
     {
-        return _boardMap.Map;
+        _boardMap.OnClickReaction(_boardMap.GetCell(boardPos));
     }
 
-    public void SendVisualBoardAction(Action visualAction)
+
+    public void VisualActionSwapBlocks(Vector2Int from, Vector2Int to)
     {
-        BuildCellsConnecctions();
-        visualAction.Invoke();
+        _visualBoard.SwapBlockFromTo(_visualBoard.GetVisualCell(from), _visualBoard.GetVisualCell(to));
     }
 
-    public void SendLogicBoardAction(Action logicAction)
+    public void VisualActionSetNewBlock(Vector2Int cellPos, Block block)
     {
-        BuildCellsConnecctions();
-        logicAction.Invoke();
+        _visualBoard.SetNewBlock(cellPos, block);
     }
 
-    public VisualCell GetVisualCell(Cell cell)
+    public void VisualActionRemoveBlock(Vector2Int cellPos)
     {
-        return _visualBoard.GetCell(cell.BoardPos);
+        _visualBoard.GetVisualCell(cellPos).RemoveBlock();
     }
 
-    public Cell GetLogicCell(VisualCell visualCell)
-    {
-        return _boardMap.GetCell(visualCell.BoardPos);
-    }
 
-    private void BuildCellsConnecctions()
-    {
-        //throw new System.NotImplementedException();
-    }
 }

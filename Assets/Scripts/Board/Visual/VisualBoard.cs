@@ -27,13 +27,15 @@ namespace Collapser
 
         private void Start()
         {
-            GenerateBoard(_boardsBridge.BoardMap.Map);
+            //GenerateBoard(_boardsBridge.BoardMap.Map);
         }
 
         public void SetCells(Cell[,] cells)
         {
             _cells = cells;
         }
+
+
 
         public void GenerateBoard(Cell[,] boardCells)
         {
@@ -59,7 +61,7 @@ namespace Collapser
                     //Create Block
                 }
             }
-            
+            Debug.Log($"Visual map was generated, size{_sizeX}x{_sizeY}");
         }
 
         public void SetNewBlock(Cell cell)
@@ -69,7 +71,15 @@ namespace Collapser
             _visualCells[cell.BoardX, cell.BoardY].SetBlock(block);
         }
         
-        public VisualCell GetCell(Vector2Int pos)
+        public void SetNewBlock(Vector2Int boardPos, Block block)
+        {
+            var visualCell = GetVisualCell(boardPos);
+            VisualBlock visualBlock = Instantiate(_blockPref, visualCell.transform);
+            visualBlock.Init(block);
+            visualCell.SetBlock(visualBlock);
+        }
+        
+        public VisualCell GetVisualCell(Vector2Int pos)
         {
             if(pos.x >= 0 && pos.x < _sizeX)
             {

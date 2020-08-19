@@ -25,10 +25,10 @@ namespace Collapser
         public void SetBlock(VisualBlock block)
         {
             _visualBlock = block;
-            block.transform.parent = transform;
-            block.transform.localPosition = Vector3.zero;
+            var transform1 = block.transform;
+            transform1.parent = transform;
+            transform1.localPosition = Vector3.zero;
         }
-        
 
         public void UnbindBlock()
         {
@@ -44,7 +44,7 @@ namespace Collapser
         private void OnMouseDown()
         {
             Debug.Log($"[OnClick] Player clicked cell{_boardPos}");
-            _boardsBridge.SendLogicBoardAction(() => _boardsBridge.BoardMap.RemoveBlocksWithSameColor(_boardsBridge.GetLogicCell(this)));
+            _boardsBridge.LogicActionOnClicked(_boardPos);
         }
 
         // Start is called before the first frame update

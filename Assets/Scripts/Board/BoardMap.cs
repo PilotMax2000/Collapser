@@ -32,7 +32,24 @@ namespace Collapser
         {
             GenerateMap();
             GeneratePathfindingGraph();
+            Debug.Log("Logic board was successfuly generated.");
             LogMap();
+        }
+        
+        void Start()
+        {
+            // GenerateMap();
+            //  GeneratePathfindingGraph();
+            //_visualBoard.GenerateBoard(_map);
+            
+            //  LogMap();
+            //  GeneratePathfindingGraph();
+            //  RemoveBlocks(SearchColorLink(_map[0,0].Block));
+            // GravitationSimulationShift();
+            // LogMap();
+            //GenerateBlocks();
+            //LogMap();
+            _boardsBridge.GenerateVisualMap();
         }
 
         private void GenerateMap()
@@ -51,6 +68,12 @@ namespace Collapser
                     mapLoaderCounter++;
                 }
             }
+            Debug.Log($"Map was generated successfully for logical board, size {_sizeX}x{_sizeY}");
+        }
+
+        public void OnClickReaction(Cell cell)
+        {
+            RemoveBlocksWithSameColor(cell);
         }
 
         //TODO: separete in different functions 
@@ -132,6 +155,7 @@ namespace Collapser
 					_graph[x,y].Neighbours.Add( _graph[x, y+1] );
                 }
             }
+            Debug.Log($"Pathfinding graph was loaded successfully, size {_sizeX}x{_sizeY}");
         }
 
         public List<Block> SearchColorLink(Block block)
@@ -232,9 +256,10 @@ namespace Collapser
             var block = fromCell.Block;
             fromCell.UnbindBlock();
             toCell.SetBlock(block);
-            _boardsBridge.SendVisualBoardAction(() => _boardsBridge.VisualBoard.SwapBlockFromTo
-            (_boardsBridge.GetVisualCell(fromCell),
-                _boardsBridge.GetVisualCell(toCell)));
+            _boardsBridge.VisualActionSwapBlocks(fromCell.BoardPos, toCell.BoardPos);
+            // _boardsBridge.SendVisualBoardAction(() => _boardsBridge.VisualBoard.SwapBlockFromTo
+            // (_boardsBridge.GetVisualCell(fromCell),
+            //     _boardsBridge.GetVisualCell(toCell)));
         }
 
         private void DoForEachCell(Action<int,int> test)
@@ -260,34 +285,15 @@ namespace Collapser
                 {
                     if (_map[x, y].IsEmpty)
                     {
-                        _map[x,y].SetNewBlock(_toSpawn.GetRandomBlock());
+                        _map[x,y].SetNewBlock(_toSpawn.GetRandomBlock(), false);
                     }
                 }
             }
         }
-        
 
-        // Start is called before the first frame update
-        void Start()
-        {
-           // GenerateMap();
-          //  GeneratePathfindingGraph();
-            //_visualBoard.GenerateBoard(_map);
-            
-          //  LogMap();
-          //  GeneratePathfindingGraph();
-          //  RemoveBlocks(SearchColorLink(_map[0,0].Block));
-           // GravitationSimulationShift();
-           // LogMap();
-            //GenerateBlocks();
-            //LogMap();
-        }
 
-        // Update is called once per frame
-        void Update()
-        {
-        
-        }
+      
+
     }
 }
 

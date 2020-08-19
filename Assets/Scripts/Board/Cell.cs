@@ -43,7 +43,7 @@ namespace Collapser
             }
         }
         
-        public void SetNewBlock(BlockParams blockParams)
+        public void SetNewBlock(BlockParams blockParams, bool onlyLogicSetup = true)
         {
             _block = new Block(blockParams, this);
             if (_block != null)
@@ -51,18 +51,23 @@ namespace Collapser
                 _isEmpty = false;
             }
 
-            if (_boardsBridge.VisualBoard == null)
+            if (onlyLogicSetup)
             {
                 return;
             }
-            //_boardsBridge.SendVisualBoardAction(() => _boardsBridge.VisualBoard.SetNewBlock(this));
+            // if (_boardsBridge.VisualBoard == null)
+            // {
+            //     return;
+            // }
+            _boardsBridge.VisualActionSetNewBlock(_boardPos, _block);
         }
 
         public void RemoveBlock()
         {
             _block = null;
             _isEmpty = true;
-            _boardsBridge.SendVisualBoardAction(_boardsBridge.GetVisualCell(this).RemoveBlock);
+            
+            _boardsBridge.VisualActionRemoveBlock(_boardPos);
         }
 
         public void UnbindBlock()

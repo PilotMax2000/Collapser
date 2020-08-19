@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 using UnityEngine;
 
 namespace Collapser
@@ -26,8 +27,14 @@ namespace Collapser
         {
             _visualBlock = block;
             var transform1 = block.transform;
-            transform1.parent = transform;
-            transform1.localPosition = Vector3.zero;
+            transform1.DOMove(transform.position, .2f)
+                .SetEase(Ease.InCubic)
+                .OnComplete(() =>
+                {
+                    transform1.parent = transform;
+                    transform1.localPosition = Vector3.zero;
+                });
+
         }
 
         public void UnbindBlock()

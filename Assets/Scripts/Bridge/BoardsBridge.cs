@@ -24,6 +24,24 @@ public class BoardsBridge : ScriptableObject
         _visualBoard = visualBoard;
     }
 
+    private void OnEnable()
+    {
+        _boardMap.Init();
+        if (_boardMap == null)
+        {
+            Debug.Log("!!");
+        }
+        else
+        {
+            Debug.Log("git");
+        }
+    }
+
+    public Cell[,] GetMapCells()
+    {
+        return _boardMap.Map;
+    }
+
     public void SendVisualBoardAction(Action visualAction)
     {
         BuildCellsConnecctions();

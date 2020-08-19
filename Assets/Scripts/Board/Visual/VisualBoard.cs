@@ -15,14 +15,24 @@ namespace Collapser
         [SerializeField] private VisualBlock _blockPref;
 
         private VisualCell[,] _visualCells;
+        private Cell[,] _cells;
         
         [Header("Bridge")] 
         [SerializeField] private BoardsBridge _boardsBridge;
 
+        private void Awake()
+        {
+            _boardsBridge.InitVisualBoard(this);
+        }
+
         private void Start()
         {
             GenerateBoard(_boardsBridge.BoardMap.Map);
-            _boardsBridge.InitVisualBoard(this);
+        }
+
+        public void SetCells(Cell[,] cells)
+        {
+            _cells = cells;
         }
 
         public void GenerateBoard(Cell[,] boardCells)
@@ -30,8 +40,7 @@ namespace Collapser
             _sizeX = boardCells.GetLength(0);
             _sizeY = boardCells.GetLength(1);
             _visualCells = new VisualCell[_sizeX,_sizeY];
-
-
+            
             for (int x = 0; x < _sizeX; x++)
             {
                 for (int y = 0; y < _sizeY; y++)

@@ -55,7 +55,7 @@ namespace Collapser
             {
                 return;
             }
-            _boardsBridge.SendVisualBoardAction(() => _boardsBridge.VisualBoard.SetNewBlock(this));
+            //_boardsBridge.SendVisualBoardAction(() => _boardsBridge.VisualBoard.SetNewBlock(this));
         }
 
         public void RemoveBlock()

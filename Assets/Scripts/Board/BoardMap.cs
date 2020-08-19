@@ -25,10 +25,14 @@ namespace Collapser
 
         private void Awake()
         {
+            _boardsBridge.InitLogicBoard(this);
+        }
+
+        public void Init()
+        {
             GenerateMap();
             GeneratePathfindingGraph();
             LogMap();
-            _boardsBridge.InitLogicBoard(this);
         }
 
         private void GenerateMap()
@@ -225,7 +229,6 @@ namespace Collapser
 
         private void SwapBlockFromTo(Cell fromCell, Cell toCell)
         {
-            //TODO: Fix bug with> 2 empty cells in a row!!!
             var block = fromCell.Block;
             fromCell.UnbindBlock();
             toCell.SetBlock(block);

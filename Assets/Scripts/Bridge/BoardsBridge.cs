@@ -9,6 +9,11 @@ public class BoardsBridge : ScriptableObject
 {
     private BoardMap _boardMap;
     private VisualBoard _visualBoard;
+    private VisualActionsHandler _actionsHandler;
+
+    private Queue<Action> _removeActions = new Queue<Action>();
+    private Queue<Action> _swapActions = new Queue<Action>();
+    private Queue<Action> _spawnNewBlockActions = new Queue<Action>();
     
     public void InitLogicBoard(BoardMap boardMap)
     {
@@ -23,6 +28,11 @@ public class BoardsBridge : ScriptableObject
     public void InitVisualBoard(VisualBoard visualBoard)
     {
         _visualBoard = visualBoard;
+    }
+
+    public void InitVisualActionHandler(VisualActionsHandler actionsHandler)
+    {
+        _actionsHandler = actionsHandler;
     }
 
     public void GenerateVisualMap()
@@ -40,17 +50,24 @@ public class BoardsBridge : ScriptableObject
 
     public void VisualActionSwapBlocks(Vector2Int from, Vector2Int to)
     {
-        _visualBoard.SwapBlockFromTo(_visualBoard.GetVisualCell(from), _visualBoard.GetVisualCell(to));
+        _swapActions.Enqueue(() => _visualBoard.SwapBlockFromTo(_visualBoard.GetVisualCell(from), _visualBoard.GetVisualCell(to))); 
     }
 
     public void VisualActionSetNewBlock(Vector2Int cellPos, Block block)
     {
-        _visualBoard.SetNewBlock(cellPos, block);
+        _spawnNewBlockActions.Enqueue(() => _visualBoard.SetNewBlock(cellPos, block));
     }
 
     public void VisualActionRemoveBlock(Vector2Int cellPos)
     {
-        _visualBoard.GetVisualCell(cellPos).RemoveBlock();
+        _removeActions.Enqueue(()=> _visualBoard.GetVisualCell(cellPos).RemoveBlock());
+    }
+
+    public void RunVisualActions()
+    {
+        _actionsHandler.DoAndWait(_removeActions, .2f);
+        _actionsHandler.DoAndWait(_swapActions, .2f);
+        _actionsHandler.DoAndWait(_spawnNewBlockActions, .2f);
     }
 
 

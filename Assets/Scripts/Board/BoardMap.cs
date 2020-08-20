@@ -61,6 +61,7 @@ namespace Collapser
         public void OnClickReaction(Cell cell)
         {
             RemoveBlocksWithSameColor(cell);
+            _boardsBridge.RunVisualActions();
         }
 
         //TODO: separete in different functions 

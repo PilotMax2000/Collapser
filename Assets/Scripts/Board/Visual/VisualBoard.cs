@@ -57,13 +57,6 @@ namespace Collapser
             }
             Debug.Log($"Visual map was generated, size{_sizeX}x{_sizeY}");
         }
-
-        public void SetNewBlock(Cell cell)
-        {
-            VisualBlock block = Instantiate(_blockPref, _visualCells[cell.BoardX, cell.BoardY].transform);
-            block.Init(cell.Block);
-            _visualCells[cell.BoardX, cell.BoardY].SetBlock(block);
-        }
         
         public void SetNewBlock(Vector2Int boardPos, Block block)
         {
@@ -87,8 +80,7 @@ namespace Collapser
             Debug.LogError($"Cell for {pos} was not found in board map!");
             return null;
         }
-
-        //TODO: Animate this!!!
+        
         public void SwapBlockFromTo(VisualCell from, VisualCell to)
         {
             var block = from.VisualBlock;

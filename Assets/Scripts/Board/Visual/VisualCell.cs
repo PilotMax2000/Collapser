@@ -44,8 +44,12 @@ namespace Collapser
 
         public void RemoveBlock()
         {
-            Destroy(_visualBlock.gameObject);
-            UnbindBlock();
+            _visualBlock.transform.DOScale(Vector3.zero, .2f).SetEase(Ease.InCubic).OnComplete(() =>
+            {
+                Destroy(_visualBlock.gameObject);
+                UnbindBlock();
+            });
+            
         }
 
         private void OnMouseDown()

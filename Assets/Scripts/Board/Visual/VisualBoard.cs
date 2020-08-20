@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 using UnityEngine;
 
 namespace Collapser
@@ -70,6 +71,8 @@ namespace Collapser
             VisualBlock visualBlock = Instantiate(_blockPref, visualCell.transform);
             visualBlock.Init(block);
             visualCell.SetBlock(visualBlock);
+            visualBlock.transform.localScale = Vector3.zero;
+            visualBlock.transform.DOScale(Vector3.one, .2f);
         }
         
         public VisualCell GetVisualCell(Vector2Int pos)

@@ -14,3 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Color: {fileID: 11400000, guid: eb2c6f21d99314649b1d87c26b9f1bc7, type: 2}
   Sprite: {fileID: 21300000, guid: c6d32ca23eb91f74687272eda4f4c062, type: 3}
+  OnClickDestruction: {fileID: 11400000, guid: fe8b7e044c1a4b84694c88eb3d246acb, type: 2}

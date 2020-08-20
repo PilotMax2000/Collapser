@@ -10,5 +10,6 @@ namespace Collapser
     {
         public BlockColor Color;
         public Sprite Sprite;
+        public OnClickDestruction OnClickDestruction;
     }
 }

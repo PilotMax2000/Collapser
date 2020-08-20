@@ -58,11 +58,84 @@ namespace Collapser
             Debug.Log($"Map was generated successfully for logical board, size {_sizeX}x{_sizeY}");
         }
 
-        public void OnClickReaction(Cell cell)
+        public void OnClickReaction(Cell clickedCell)
         {
-            RemoveBlocksWithSameColor(cell);
+            //TODO:OnClickDestructioin parse
+            var listToDestruction = GetBlocksForDestruction(clickedCell);
+            if (listToDestruction == null || listToDestruction.Count <= 0)
+            {
+                return;
+            }
+            RemoveBlocks(listToDestruction);
+            GravitationSimulationShift();
+            LogMap();
+            GenerateNewBlocks();
+            LogMap();
             _boardsBridge.RunVisualActions();
+
         }
+
+        private List<Block> GetBlocksForDestruction(Cell cell)
+        {
+            if (cell.Block == null || cell.Block.BlockParams == null)
+            {
+                Debug.LogError($"Cell {cell.BoardX},{cell.BoardY} has no block or block params!");
+                return null;
+            }
+            
+            
+            var onDest = cell.Block.BlockParams.OnClickDestruction;
+            
+            //Generate list of target blocks to targets
+
+            if (onDest.LinkOtherBlocksByColor && onDest.TargetBlocks != null && onDest.TargetBlocks.Count > 0)
+            {
+                var target0 = GetCell(onDest.GetBoardPosDueToTargetOffset(cell.BoardPos, onDest.TargetBlocks[0]));
+                
+                if (target0 == null)
+                {
+                    Debug.LogError($"Target0 color was not fount on board, pos {target0.BoardX},{target0.BoardY}");
+                    return null;
+                }
+                
+                if (target0.Block == null || target0.Block.BlockParams == null ||
+                    target0.Block.BlockParams.Color == null)
+                {
+                    Debug.LogError($"Target0 color was not fount, pos {target0.BoardX},{target0.BoardY}");
+                    return null;
+                }
+                
+                //Currently for linking only use info of first element
+                var linkedBlocks = onDest.OverrideFirstTargetColor == null
+                    ? SearchColorLink(target0.Block) 
+                    : SearchColorLink(target0.Block, onDest.OverrideFirstTargetColor);
+
+                if (linkedBlocks != null && linkedBlocks.Count >= onDest.MinLinkingNumber)
+                {
+                    return linkedBlocks;
+                }
+                Debug.Log("Not enought blocks for destruction. Will return null");
+                return null;
+
+            }
+            
+            List<Block> resBlocks = new List<Block>();
+            if (onDest.TargetBlocks != null && onDest.TargetBlocks.Count > 0)
+            {
+                foreach (var cellPos in onDest.TargetBlocks)
+                {
+                    var cellWithTarget = GetCell(onDest.GetBoardPosDueToTargetOffset(cell.BoardPos, cellPos));
+                    if (cellWithTarget != null)
+                    {
+                        resBlocks.Add(cellWithTarget.Block);
+                    }
+                }
+                return resBlocks;
+            }
+            return null;
+        }
+        
+        
 
         //TODO: separete in different functions 
         public void RemoveBlocksWithSameColor(Cell cell)
@@ -146,10 +219,11 @@ namespace Collapser
             Debug.Log($"Pathfinding graph was loaded successfully, size {_sizeX}x{_sizeY}");
         }
 
-        public List<Block> SearchColorLink(Block block)
+        public List<Block> SearchColorLink(Block block, BlockColor useOtherColor = null)
         {
             List<Block> foundBlocks = new List<Block>();
             List<Block> toSearchIn = new List<Block>();
+            BlockColor currentColor = useOtherColor == null ? block.BlockParams.Color : useOtherColor;
 
             var currentBlock = block;
             
@@ -160,7 +234,7 @@ namespace Collapser
                 {
                     continue;
                 }
-                if (GetCell(node.Pos).Block.BlockParams.Color == currentBlock.BlockParams.Color
+                if (GetCell(node.Pos).Block.BlockParams.Color == currentColor
                     && toSearchIn.Contains(GetCell(node.Pos).Block) == false)
                 {
                     toSearchIn.Add(GetCell(node.Pos).Block);
@@ -177,7 +251,7 @@ namespace Collapser
                     {
                         continue;
                     }
-                    if (GetCell(node.Pos).Block.BlockParams.Color == currentBlock.BlockParams.Color
+                    if (GetCell(node.Pos).Block.BlockParams.Color == currentColor
                         && toSearchIn.Contains(GetCell(node.Pos).Block) == false
                         && foundBlocks.Contains(GetCell(node.Pos).Block) == false)
                     {

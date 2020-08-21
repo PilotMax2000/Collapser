@@ -14,7 +14,7 @@ public class BoardsBridge : ScriptableObject
     private Queue<Action> _removeActions = new Queue<Action>();
     private Queue<Action> _swapActions = new Queue<Action>();
     private Queue<Action> _spawnNewBlockActions = new Queue<Action>();
-    
+
     public void InitLogicBoard(BoardMap boardMap)
     {
         _boardMap = boardMap;
@@ -65,9 +65,11 @@ public class BoardsBridge : ScriptableObject
 
     public void RunVisualActions()
     {
+        _actionsHandler.DoWithoutWaiting(() => _visualBoard.BlockPlayersInput(true));
         _actionsHandler.DoAndWait(_removeActions, .2f);
         _actionsHandler.DoAndWait(_swapActions, .2f);
         _actionsHandler.DoAndWait(_spawnNewBlockActions, .2f);
+        _actionsHandler.DoWithoutWaiting(() => _visualBoard.BlockPlayersInput(false));
     }
 
 

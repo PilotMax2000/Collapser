@@ -23,7 +23,7 @@ namespace Collapser
             // _actionsQueue.Run(WaitAndDo(() => Debug.LogError("______"), 1.0f));
         }
 
-        public void DoAndWait(Queue<Action> actions, float time)
+        public  void DoAndWait(Queue<Action> actions, float time)
         {
             _actionsQueue.Run(WaitAndDo(() =>
             {
@@ -32,6 +32,16 @@ namespace Collapser
                     actions.Dequeue().Invoke();
                 }
             }, time));
+        }
+        
+        public  void DoAndWaitSingle(Action action, float time)
+        {
+            _actionsQueue.Run(DoAndWait(action, time));
+        }
+
+        public void DoWithoutWaiting(Action action)
+        {
+            _actionsQueue.Run(Do(action));
         }
         
         private IEnumerator DoAndWait(System.Action task, float time)
@@ -44,6 +54,12 @@ namespace Collapser
         {
             yield return new WaitForSeconds(time);
             task();
+        }
+
+        private IEnumerator Do(System.Action task)
+        {
+            task();
+            yield break;
         }
     }
 

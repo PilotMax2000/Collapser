@@ -20,15 +20,18 @@ namespace Collapser
         
         [Header("Bridge")] 
         [SerializeField] private BoardsBridge _boardsBridge;
+        
+        [Header("Settings")] 
+        [SerializeField] private BoolVariable _isBlockingInput;
 
         private void Awake()
         {
             _boardsBridge.InitVisualBoard(this);
         }
 
-        public void SetCells(Cell[,] cells)
+        public void BlockPlayersInput(bool blockInput)
         {
-            _cells = cells;
+            _isBlockingInput.Value = blockInput;
         }
         
         public void GenerateBoard(Cell[,] boardCells)
@@ -59,7 +62,7 @@ namespace Collapser
             }
             
             transform.localPosition = new Vector2(-(_sizeX-1)/2.0f, -(_sizeY-1)/2.0f);
-
+            BlockPlayersInput(false);
             Debug.Log($"Visual map was generated, size{_sizeX}x{_sizeY}");
         }
         

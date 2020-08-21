@@ -10,8 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: cfdcd775e22579c46907b2d6c81df35b, type: 3}
-  m_Name: BombRemovalBooster
+  m_Name: DynamiteRemovalBooster
   m_EditorClassIdentifier: 
-  Color: {fileID: 11400000, guid: 63d262de8f0c8fd4cbd672c630cbc445, type: 2}
+  Color: {fileID: 0}
   Sprite: {fileID: 21300000, guid: 69dedc91b8231dc4987001f918662ff2, type: 3}
   OnClickDestruction: {fileID: 11400000, guid: da20329189bdf31429a6e61ecc3b195c, type: 2}

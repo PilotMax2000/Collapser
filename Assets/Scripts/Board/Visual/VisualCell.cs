@@ -11,6 +11,9 @@ namespace Collapser
         private Vector2Int _boardPos;
         [SerializeField] private VisualBlock _visualBlock;
         [SerializeField] private BoardsBridge _boardsBridge;
+
+        [Header("Settings")] 
+        [SerializeField] private BoolVariable _isBlockingInput;
         public VisualBlock VisualBlock => _visualBlock;
 
         public void Init(Cell cell)
@@ -56,6 +59,10 @@ namespace Collapser
 
         private void OnMouseDown()
         {
+            if (_isBlockingInput.Value)
+            {
+                return;
+            }
             Debug.Log($"[OnClick] Player clicked cell{_boardPos}");
             _boardsBridge.LogicActionOnClicked(_boardPos);
         }

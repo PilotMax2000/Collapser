@@ -73,6 +73,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _visualBlock: {fileID: 0}
   _boardsBridge: {fileID: 11400000, guid: 1bb96a0c270f24b43a216526c6b524b4, type: 2}
+  _isBlockingInput: {fileID: 11400000, guid: 4ad8567091444ee4082a7d1fcee150bf, type: 2}
 --- !u!212 &8487547606506546650
 SpriteRenderer:
   m_ObjectHideFlags: 0

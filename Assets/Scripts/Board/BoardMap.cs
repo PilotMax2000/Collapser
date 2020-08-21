@@ -7,11 +7,8 @@ namespace Collapser
 {
     public class BoardMap : MonoBehaviour
     {
-        [SerializeField] private int _sizeX;
-        [SerializeField] private int _sizeY;
-
-        [SerializeField] private List<BlockParams> _mapToLoad = new List<BlockParams>(9);
-        [SerializeField] private BlocksToSpawn _toSpawn;
+        [Header("Loading levels")] 
+        [SerializeField] private LevelData _levelData;
 
         [Header("Bridge")] 
         [SerializeField] private BoardsBridge _boardsBridge;
@@ -42,22 +39,22 @@ namespace Collapser
 
         private void GenerateMap()
         {
-            _map = new Cell[_sizeX,_sizeY];
+            _map = new Cell[_levelData.SizeX,_levelData.SizeY];
             
             //TODO:remove after map functionality
             int mapLoaderCounter = 0;
                 
-            for (int y = 0; y < _sizeY; y++)
+            for (int y = 0; y < _levelData.SizeY; y++)
             {
-                for (int x = 0; x < _sizeX; x++)
+                for (int x = 0; x < _levelData.SizeX; x++)
                 {
                     _map[x,y] = new Cell(new Vector2Int(x,y), _boardsBridge);
-                    _map[x,y].SetNewBlock(_mapToLoad[mapLoaderCounter]);
+                    _map[x,y].SetNewBlock(_levelData.StartMapToLoad[mapLoaderCounter]);
                     _mapAsList.Add(_map[x,y]);
                     mapLoaderCounter++;
                 }
             }
-            Debug.Log($"Map was generated successfully for logical board, size {_sizeX}x{_sizeY}");
+            Debug.Log($"Map was generated successfully for logical board, size {_levelData.SizeX}x{_levelData.SizeY}");
         }
 
         public void OnClickReaction(Cell clickedCell)
@@ -169,9 +166,9 @@ namespace Collapser
 
         public Cell GetCell(Vector2Int pos)
         {
-            if(pos.x >= 0 && pos.x < _sizeX)
+            if(pos.x >= 0 && pos.x < _levelData.SizeX)
             {
-                if (pos.y >= 0 && pos.y < _sizeY)
+                if (pos.y >= 0 && pos.y < _levelData.SizeY)
                 {
                     return _map[pos.x, pos.y];
                 }
@@ -184,9 +181,9 @@ namespace Collapser
         private void LogMap()
         {
             Debug.Log("===========Reading Map============");
-            for (int y = 0; y < _sizeY; y++)
+            for (int y = 0; y < _levelData.SizeY; y++)
             {
-                for (int x = 0; x < _sizeX; x++)
+                for (int x = 0; x < _levelData.SizeX; x++)
                 {
                     if (_map[x, y].IsEmpty)
                     {
@@ -204,31 +201,31 @@ namespace Collapser
         
         void GeneratePathfindingGraph() {
             // Initialize the array
-            _graph = new Node[_sizeX,_sizeY];
+            _graph = new Node[_levelData.SizeX,_levelData.SizeY];
 
             // Initialize a Node for each spot in the array
-            for(int x=0; x < _sizeX; x++) {
-                for(int y=0; y < _sizeY; y++) {
+            for(int x=0; x < _levelData.SizeX; x++) {
+                for(int y=0; y < _levelData.SizeY; y++) {
                     _graph[x,y] = new Node(new Vector2Int(x,y));
                 }
             }
 
             // Now that all the nodes exist, calculate their neighbours
-            for(int x=0; x < _sizeX; x++) {
-                for(int y=0; y < _sizeY; y++) {
+            for(int x=0; x < _levelData.SizeX; x++) {
+                for(int y=0; y < _levelData.SizeY; y++) {
 
                     // This is the 4-way connection version:
 				if(x > 0)
 					_graph[x,y].Neighbours.Add( _graph[x-1, y] );
-				if(x < _sizeX-1)
+				if(x < _levelData.SizeX-1)
 					_graph[x,y].Neighbours.Add( _graph[x+1, y] );
 				if(y > 0)
 					_graph[x,y].Neighbours.Add( _graph[x, y-1] );
-				if(y < _sizeY-1)
+				if(y < _levelData.SizeY-1)
 					_graph[x,y].Neighbours.Add( _graph[x, y+1] );
                 }
             }
-            Debug.Log($"Pathfinding graph was loaded successfully, size {_sizeX}x{_sizeY}");
+            Debug.Log($"Pathfinding graph was loaded successfully, size {_levelData.SizeX}x{_levelData.SizeY}");
         }
 
         public List<Block> SearchColorLink(Block block, BlockColor useOtherColor = null)
@@ -290,11 +287,11 @@ namespace Collapser
 
         private void GravitationSimulationShift()
         {
-            for (int x = 0; x < _sizeX; x++)
+            for (int x = 0; x < _levelData.SizeX; x++)
             {
                 int lastFixedBlock = -1;
                 int currentIndex = 0;
-                while (currentIndex < _sizeY - 1)
+                while (currentIndex < _levelData.SizeY - 1)
                 {
                     if (_map[x, currentIndex].IsEmpty == false)
                     {
@@ -335,9 +332,9 @@ namespace Collapser
 
         private void DoForEachCell(Action<int,int> test)
         {
-            for (int y = 0; y < _sizeY-1; y++)
+            for (int y = 0; y < _levelData.SizeY-1; y++)
             {
-                for (int x = 0; x < _sizeX; x++)
+                for (int x = 0; x < _levelData.SizeX; x++)
                 {
                     //TODO:fix this - will work only if EVERY cell has block (no empty/dead cells on level)
                     if (_map[x, y].IsEmpty)
@@ -350,13 +347,13 @@ namespace Collapser
 
         private void GenerateNewBlocks()
         {
-            for (int y = 0; y < _sizeY; y++)
+            for (int y = 0; y < _levelData.SizeY; y++)
             {
-                for (int x = 0; x < _sizeX; x++)
+                for (int x = 0; x < _levelData.SizeX; x++)
                 {
                     if (_map[x, y].IsEmpty)
                     {
-                        _map[x,y].SetNewBlock(_toSpawn.GetRandomBlock(), false);
+                        _map[x,y].SetNewBlock(_levelData.BlocksToSpawn.GetRandomBlock(), false);
                     }
                 }
             }

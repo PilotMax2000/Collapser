@@ -10,8 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: cfdcd775e22579c46907b2d6c81df35b, type: 3}
-  m_Name: BombBlock
+  m_Name: PurpleBlock
   m_EditorClassIdentifier: 
-  Color: {fileID: 11400000, guid: 63d262de8f0c8fd4cbd672c630cbc445, type: 2}
-  Sprite: {fileID: 21300000, guid: 024cc3e5eb76f164fb60d7c0d8f02df5, type: 3}
-  OnClickDestruction: {fileID: 11400000, guid: da20329189bdf31429a6e61ecc3b195c, type: 2}
+  Color: {fileID: 11400000, guid: 92331d84d7a255748803c3f483fc9c09, type: 2}
+  Sprite: {fileID: 21300000, guid: 40bc15b5b0856094a8178716c4d3428b, type: 3}
+  OnClickDestruction: {fileID: 11400000, guid: fe8b7e044c1a4b84694c88eb3d246acb, type: 2}

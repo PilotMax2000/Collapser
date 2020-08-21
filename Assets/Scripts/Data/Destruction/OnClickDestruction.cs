@@ -8,9 +8,10 @@ namespace Collapser
     public class OnClickDestruction : ScriptableObject
     {
         public List<CellPos> TargetBlocks;
+        public bool TargetAllBoard;
         public bool LinkOtherBlocksByColor;
         [Range(0,10)] public int MinLinkingNumber;
-        public BlockColor OverrideFirstTargetColor;
+        public BlockColor OverrideTargetColor;
         
         public Vector2Int GetBoardPosDueToTargetOffset(Vector2Int boardPos, CellPos cellPos)
         {

@@ -18,6 +18,7 @@ namespace Collapser
 
         private Cell[,] _map;
         private Node[,] _graph;
+        private List<Cell> _mapAsList = new List<Cell>();
 
         public Cell[,] Map => _map;
 
@@ -52,6 +53,7 @@ namespace Collapser
                 {
                     _map[x,y] = new Cell(new Vector2Int(x,y), _boardsBridge);
                     _map[x,y].SetNewBlock(_mapToLoad[mapLoaderCounter]);
+                    _mapAsList.Add(_map[x,y]);
                     mapLoaderCounter++;
                 }
             }
@@ -106,9 +108,9 @@ namespace Collapser
                 }
                 
                 //Currently for linking only use info of first element
-                var linkedBlocks = onDest.OverrideFirstTargetColor == null
+                var linkedBlocks = onDest.OverrideTargetColor == null
                     ? SearchColorLink(target0.Block) 
-                    : SearchColorLink(target0.Block, onDest.OverrideFirstTargetColor);
+                    : SearchColorLink(target0.Block, onDest.OverrideTargetColor);
 
                 if (linkedBlocks != null && linkedBlocks.Count >= onDest.MinLinkingNumber)
                 {
@@ -116,23 +118,33 @@ namespace Collapser
                 }
                 Debug.Log("Not enought blocks for destruction. Will return null");
                 return null;
-
             }
             
             List<Block> resBlocks = new List<Block>();
+            if (onDest.TargetAllBoard)
+            {
+                foreach (var cellWithProperColor in _mapAsList)
+                {
+                    if (cellWithProperColor.Block.BlockParams.Color != null &&
+                        cellWithProperColor.Block.BlockParams.Color == onDest.OverrideTargetColor)
+                    {
+                        resBlocks.Add(cellWithProperColor.Block);
+                    }
+                }
+            }
+            
             if (onDest.TargetBlocks != null && onDest.TargetBlocks.Count > 0)
             {
                 foreach (var cellPos in onDest.TargetBlocks)
                 {
                     var cellWithTarget = GetCell(onDest.GetBoardPosDueToTargetOffset(cell.BoardPos, cellPos));
-                    if (cellWithTarget != null)
+                    if (cellWithTarget != null && resBlocks.Contains(cellWithTarget.Block) == false)
                     {
                         resBlocks.Add(cellWithTarget.Block);
                     }
                 }
-                return resBlocks;
             }
-            return null;
+            return resBlocks;
         }
         
         

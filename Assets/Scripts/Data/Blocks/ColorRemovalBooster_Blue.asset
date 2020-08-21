@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cfdcd775e22579c46907b2d6c81df35b, type: 3}
+  m_Name: ColorRemovalBooster_Blue
+  m_EditorClassIdentifier: 
+  Color: {fileID: 0}
+  Sprite: {fileID: 21300000, guid: 8b13642762d63b8429bfb5a4a5b269e8, type: 3}
+  OnClickDestruction: {fileID: 11400000, guid: 6289214a0a876ff4fb639a92ccead6f6, type: 2}

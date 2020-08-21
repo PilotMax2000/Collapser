@@ -46,7 +46,7 @@ namespace Collapser
                     //Create Cell
                     VisualCell cell = Instantiate(_cellPref, transform);
                     _visualCells[x, y] = cell;
-                    cell.Init(boardCells[x,y], _boardsBridge);
+                    cell.Init(boardCells[x,y]);
                     var cellTransform = cell.transform;
                     cellTransform.position = new Vector3(x,y,0);
                     

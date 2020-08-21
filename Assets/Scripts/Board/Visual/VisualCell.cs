@@ -10,36 +10,31 @@ namespace Collapser
     {
         private Vector2Int _boardPos;
         [SerializeField] private VisualBlock _visualBlock;
+        [SerializeField] private BoardsBridge _boardsBridge;
         public VisualBlock VisualBlock => _visualBlock;
 
-        public Vector2Int BoardPos => _boardPos;
-        public int BoardX => _boardPos.x;
-        public int BoardY => _boardPos.y;
-        private BoardsBridge _boardsBridge;
-
-        public void Init(Cell cell, BoardsBridge bridge)
+        public void Init(Cell cell)
         {
             _boardPos = cell.BoardPos;
-            _boardsBridge = bridge;
         }
 
         public void SetBlock(VisualBlock block, bool showSetAnim = true)
         {
             _visualBlock = block;
-            var transform1 = block.transform;
+            var blockTransform = block.transform;
             if (showSetAnim == false)
             {
-                transform1.parent = transform;
-                transform1.localPosition = Vector3.zero;
+                blockTransform.parent = transform;
+                blockTransform.localPosition = Vector3.zero;
                 return;
             }
             
-            transform1.DOMove(transform.position, .2f)
+            blockTransform.DOMove(transform.position, .2f)
                 .SetEase(Ease.InCubic)
                 .OnComplete(() =>
                 {
-                    transform1.parent = transform;
-                    transform1.localPosition = Vector3.zero;
+                    blockTransform.parent = transform;
+                    blockTransform.localPosition = Vector3.zero;
                 });
 
         }

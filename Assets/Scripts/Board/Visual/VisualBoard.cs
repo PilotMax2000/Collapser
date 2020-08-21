@@ -37,6 +37,8 @@ namespace Collapser
             _sizeY = boardCells.GetLength(1);
             _visualCells = new VisualCell[_sizeX,_sizeY];
             
+            
+            
             for (int x = 0; x < _sizeX; x++)
             {
                 for (int y = 0; y < _sizeY; y++)
@@ -51,10 +53,13 @@ namespace Collapser
                     VisualBlock block = Instantiate(_blockPref, cellTransform);
                     block.Init(boardCells[x,y].Block);
                     
-                    cell.SetBlock(block);
+                    cell.SetBlock(block, false);
                     //Create Block
                 }
             }
+            
+            transform.localPosition = new Vector2(-(_sizeX-1)/2.0f, -(_sizeY-1)/2.0f);
+
             Debug.Log($"Visual map was generated, size{_sizeX}x{_sizeY}");
         }
         

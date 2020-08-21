@@ -23,10 +23,17 @@ namespace Collapser
             _boardsBridge = bridge;
         }
 
-        public void SetBlock(VisualBlock block)
+        public void SetBlock(VisualBlock block, bool showSetAnim = true)
         {
             _visualBlock = block;
             var transform1 = block.transform;
+            if (showSetAnim == false)
+            {
+                transform1.parent = transform;
+                transform1.localPosition = Vector3.zero;
+                return;
+            }
+            
             transform1.DOMove(transform.position, .2f)
                 .SetEase(Ease.InCubic)
                 .OnComplete(() =>

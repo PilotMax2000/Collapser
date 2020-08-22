@@ -23,6 +23,7 @@ namespace Collapser
         
         [Header("Settings")] 
         [SerializeField] private BoolVariable _isBlockingInput;
+        [SerializeField] private FloatVariable _globalAnimationDuration;
 
         private void Awake()
         {
@@ -73,7 +74,7 @@ namespace Collapser
             visualBlock.Init(block);
             visualCell.SetBlock(visualBlock);
             visualBlock.transform.localScale = Vector3.zero;
-            visualBlock.transform.DOScale(Vector3.one, .2f);
+            visualBlock.transform.DOScale(Vector3.one, _globalAnimationDuration.Value);
         }
         
         public VisualCell GetVisualCell(Vector2Int pos)

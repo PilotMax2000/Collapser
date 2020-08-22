@@ -9,8 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 493c8dbd632879e44890ebc716ee7ba8, type: 3}
-  m_Name: BoardsBridge
+  m_Script: {fileID: 11500000, guid: 796146d6db9e74148be4306a1390a5fe, type: 3}
+  m_Name: GlobalAnimationTimeDuration
   m_EditorClassIdentifier: 
-  _globalAnimationDuration: {fileID: 11400000, guid: 0447850dacc6a9646ac424611b8bb5e0,
-    type: 2}
+  DeveloperDescription: Tweening duration for all tweening
+  value: 0.16

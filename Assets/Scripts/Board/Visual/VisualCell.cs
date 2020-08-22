@@ -14,6 +14,7 @@ namespace Collapser
 
         [Header("Settings")] 
         [SerializeField] private BoolVariable _isBlockingInput;
+        [SerializeField] private FloatVariable _globalAnimationDuration;
         public VisualBlock VisualBlock => _visualBlock;
 
         public void Init(Cell cell)
@@ -32,7 +33,7 @@ namespace Collapser
                 return;
             }
             
-            blockTransform.DOMove(transform.position, .2f)
+            blockTransform.DOMove(transform.position, _globalAnimationDuration.Value)
                 .SetEase(Ease.InCubic)
                 .OnComplete(() =>
                 {
@@ -49,7 +50,7 @@ namespace Collapser
 
         public void RemoveBlock()
         {
-            _visualBlock.transform.DOScale(Vector3.zero, .2f).SetEase(Ease.InCubic).OnComplete(() =>
+            _visualBlock.transform.DOScale(Vector3.zero, _globalAnimationDuration.Value).SetEase(Ease.InCubic).OnComplete(() =>
             {
                 Destroy(_visualBlock.gameObject);
                 UnbindBlock();

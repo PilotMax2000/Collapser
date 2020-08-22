@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a445aa346c39edc42bb7206ee2eb54f5, type: 3}
   m_Name: IsBlockingInput
   m_EditorClassIdentifier: 
-  DeveloperDescription: 
+  DeveloperDescription: Blocking player input while animating board (live)
   value: 0

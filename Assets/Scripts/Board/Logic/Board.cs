@@ -13,11 +13,10 @@ namespace Collapser
         [Header("Bridge")] 
         [SerializeField] private BoardsBridge _boardsBridge;
 
-        private Cell[,] _map;
         private Node[,] _graph;
-        private List<Cell> _mapAsList = new List<Cell>();
+        private readonly List<Cell> _mapAsList = new List<Cell>();
 
-        public Cell[,] Map => _map;
+        public Cell[,] Map { get; private set; }
 
         private void Awake()
         {
@@ -28,7 +27,7 @@ namespace Collapser
         {
             GenerateLevelMap();
             GeneratePathfindingGraph();
-            Debug.Log("Logic board was successfuly generated.");
+            Debug.Log("Logic board was successfully generated.");
             LogMap();
         }
         
@@ -39,7 +38,7 @@ namespace Collapser
 
         private void GenerateLevelMap()
         {
-            _map = new Cell[_levelData.SizeX,_levelData.SizeY];
+            Map = new Cell[_levelData.SizeX,_levelData.SizeY];
             int mapLoaderCounter = 0;
                 
             //TODO: move out matrix search
@@ -47,9 +46,9 @@ namespace Collapser
             {
                 for (int x = 0; x < _levelData.SizeX; x++)
                 {
-                    _map[x,y] = new Cell(new Vector2Int(x,y), _boardsBridge);
-                    _map[x,y].SetNewBlock(_levelData.StartMapToLoad[mapLoaderCounter]);
-                    _mapAsList.Add(_map[x,y]);
+                    Map[x,y] = new Cell(new Vector2Int(x,y), _boardsBridge);
+                    Map[x,y].SetNewBlock(_levelData.StartMapToLoad[mapLoaderCounter]);
+                    _mapAsList.Add(Map[x,y]);
                     mapLoaderCounter++;
                 }
             }
@@ -149,13 +148,13 @@ namespace Collapser
             return GetCell(pos.x, pos.y, showLogs);
         }
 
-        public Cell GetCell(int x, int y, bool showLogs = true)
+        private Cell GetCell(int x, int y, bool showLogs = true)
         {
             if(x >= 0 && x < _levelData.SizeX)
             {
                 if (y >= 0 && y < _levelData.SizeY)
                 {
-                    return _map[x, y];
+                    return Map[x, y];
                 }
             }
 
@@ -178,11 +177,10 @@ namespace Collapser
         }
 
         
-        void GeneratePathfindingGraph() {
-            // Initialize the array
+        private void GeneratePathfindingGraph() 
+        {
             _graph = new Node[_levelData.SizeX,_levelData.SizeY];
-
-            // Initialize a Node for each spot in the array
+            
             for(int x=0; x < _levelData.SizeX; x++) {
                 for(int y=0; y < _levelData.SizeY; y++) {
                     _graph[x,y] = new Node(new Vector2Int(x,y));
@@ -207,14 +205,28 @@ namespace Collapser
             Debug.Log($"Pathfinding graph was loaded successfully, size {_levelData.SizeX}x{_levelData.SizeY}");
         }
 
-        public List<Block> SearchColorLink(Block block, BlockColor useOtherColor = null)
+        private List<Block> SearchColorLink(Block block, BlockColor useOtherColor = null)
         {
             List<Block> foundBlocks = new List<Block>();
             List<Block> toSearchIn = new List<Block>();
             BlockColor currentColor = useOtherColor == null ? block.BlockParams.Color : useOtherColor;
 
-            var currentBlock = block;
-            
+            Block currentBlock = block;
+            FindProperColorNeighbourBlocks(foundBlocks, currentBlock, currentColor, toSearchIn);
+
+            while (toSearchIn.Count > 0)
+            {
+                currentBlock = toSearchIn[toSearchIn.Count - 1];
+                FindProperColorNeighbourBlocks(foundBlocks, currentBlock, currentColor, toSearchIn);
+
+                toSearchIn.Remove(currentBlock);
+            }
+            return foundBlocks;
+        }
+
+        private void FindProperColorNeighbourBlocks(List<Block> foundBlocks, Block currentBlock, BlockColor currentColor,
+            List<Block> toSearchIn)
+        {
             foundBlocks.Add(currentBlock);
             foreach (var node in _graph[currentBlock.Cell.BoardX, currentBlock.Cell.BoardY].Neighbours)
             {
@@ -222,35 +234,14 @@ namespace Collapser
                 {
                     continue;
                 }
+
                 if (GetCell(node.Pos).Block.BlockParams.Color == currentColor
-                    && toSearchIn.Contains(GetCell(node.Pos).Block) == false)
+                    && toSearchIn.Contains(GetCell(node.Pos).Block) == false 
+                    && foundBlocks.Contains(GetCell(node.Pos).Block) == false)
                 {
                     toSearchIn.Add(GetCell(node.Pos).Block);
                 }
             }
-
-            while (toSearchIn.Count > 0)
-            {
-                currentBlock = toSearchIn[toSearchIn.Count - 1];
-                foundBlocks.Add(currentBlock);
-                foreach (var node in _graph[currentBlock.Cell.BoardX, currentBlock.Cell.BoardY].Neighbours)
-                {
-                    if (GetCell(node.Pos).IsEmpty)
-                    {
-                        continue;
-                    }
-                    if (GetCell(node.Pos).Block.BlockParams.Color == currentColor
-                        && toSearchIn.Contains(GetCell(node.Pos).Block) == false
-                        && foundBlocks.Contains(GetCell(node.Pos).Block) == false)
-                    {
-                        toSearchIn.Add(GetCell(node.Pos).Block);
-                    }
-                }
-
-                toSearchIn.Remove(currentBlock);
-            }
-            Debug.Log(foundBlocks);
-            return foundBlocks;
         }
 
         private static void RemoveBlocks(List<Block> blocksToRemove)
@@ -293,7 +284,7 @@ namespace Collapser
             }
             
             bool previousAndLastFixedYAreDifferent = currentYIndex - 1 != lastFixedYIndex;
-            var cellForSwappingTo = previousAndLastFixedYAreDifferent ? lastFixedYIndex + 1 : currentYIndex;
+            int cellForSwappingTo = previousAndLastFixedYAreDifferent ? lastFixedYIndex + 1 : currentYIndex;
             SwapBlockFromTo(GetCell(currentXIndex, currentYIndex + 1), GetCell(currentXIndex, cellForSwappingTo));
             lastFixedYIndex = previousAndLastFixedYAreDifferent ? ++lastFixedYIndex : currentYIndex;
 
@@ -319,17 +310,10 @@ namespace Collapser
                 cell.SetNewBlock(_levelData.BlocksToSpawn.GetRandomBlock(), false);
             });
         }
-        
-        
+
         private void DoForEachCell(Action<Cell> actionForCell)
         {
-            for (int x = 0; x < _levelData.SizeX; x++)
-            {
-                for (int y = 0; y < _levelData.SizeY; y++)
-                {
-                    actionForCell(GetCell(x,y));
-                }
-            }
+            DoForEachCell((cell, x, y) => actionForCell(cell));
         }
         
         private void DoForEachCell(Action<Cell,int,int> actionForCell)
@@ -342,9 +326,6 @@ namespace Collapser
                 }
             }
         }
-        
-        
-        
     }
 }
 

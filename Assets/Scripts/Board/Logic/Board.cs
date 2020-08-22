@@ -143,26 +143,6 @@ namespace Collapser
             }
             return resBlocks;
         }
-        
-        
-
-        //TODO: separete in different functions 
-        public void RemoveBlocksWithSameColor(Cell cell)
-        {
-            List<Block> resBlocks = SearchColorLink(cell.Block);
-            if (resBlocks != null && resBlocks.Count >= 2)
-            {
-                RemoveBlocks(resBlocks);
-                //TODO:Send events for destruction
-                //TODO:Move to visual events
-                //_visualBoard.UpdateBoard();
-            }
-            GravitationSimulationShift();
-            LogMap();
-            GenerateNewBlocks();
-            LogMap();
-            
-        }
 
         public Cell GetCell(Vector2Int pos)
         {
@@ -322,17 +302,16 @@ namespace Collapser
 
         private void GenerateNewBlocks()
         {
-            DoForEachCell(GenerateNewBlock);
-        }
-
-
-        private void GenerateNewBlock(Cell cell)
-        {
-            if (cell.IsEmpty)
+            DoForEachCell((cell) =>
             {
+                if (cell.IsEmpty == false)
+                {
+                    return;
+                }
                 cell.SetNewBlock(_levelData.BlocksToSpawn.GetRandomBlock(), false);
-            }
+            });
         }
+        
         
         private void DoForEachCell(Action<Cell> actionForCell)
         {

@@ -9,7 +9,7 @@ namespace Collapser
     [CreateAssetMenu(fileName = "BoardsBridge", menuName = "Other/BoardBridge")]
     public class BoardsBridge : ScriptableObject
     {
-        private BoardMap _boardMap;
+        private Board _board;
         private VisualBoard _visualBoard;
         private VisualActionsHandler _actionsHandler;
 
@@ -19,13 +19,13 @@ namespace Collapser
         
         [SerializeField] private FloatVariable _globalAnimationDuration;
 
-        public void InitLogicBoard(BoardMap boardMap)
+        public void InitLogicBoard(Board board)
         {
-            _boardMap = boardMap;
-            if (boardMap != null)
+            _board = board;
+            if (board != null)
             {
                 Debug.Log("Logic Board was registered in  bridge");
-                _boardMap.Init();
+                _board.Init();
             }
         }
 
@@ -41,15 +41,15 @@ namespace Collapser
 
         public void GenerateVisualMap()
         {
-            if (_visualBoard != null && _boardMap != null)
+            if (_visualBoard != null && _board != null)
             {
-                _visualBoard.GenerateBoard(_boardMap.Map);
+                _visualBoard.GenerateBoard(_board.Map);
             }
         }
 
         public void LogicActionOnClicked(Vector2Int boardPos)
         {
-            _boardMap.OnClickReaction(_boardMap.GetCell(boardPos));
+            _board.OnClickReaction(_board.GetCell(boardPos));
         }
 
         public void VisualActionSwapBlocks(Vector2Int from, Vector2Int to)

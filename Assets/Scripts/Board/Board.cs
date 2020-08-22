@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Collapser
 {
-    public class BoardMap : MonoBehaviour
+    public class Board : MonoBehaviour
     {
         [Header("Loading levels")] 
         [SerializeField] private LevelData _levelData;

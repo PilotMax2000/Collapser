@@ -146,17 +146,22 @@ namespace Collapser
 
         public Cell GetCell(Vector2Int pos, bool showLogs = true)
         {
-            if(pos.x >= 0 && pos.x < _levelData.SizeX)
+            return GetCell(pos.x, pos.y, showLogs);
+        }
+
+        public Cell GetCell(int x, int y, bool showLogs = true)
+        {
+            if(x >= 0 && x < _levelData.SizeX)
             {
-                if (pos.y >= 0 && pos.y < _levelData.SizeY)
+                if (y >= 0 && y < _levelData.SizeY)
                 {
-                    return _map[pos.x, pos.y];
+                    return _map[x, y];
                 }
             }
 
             if (showLogs)
             {
-                Debug.LogError($"Cell for {pos} was not found in board map!");
+                Debug.LogError($"Cell for {x},{y} was not found in board map!");
             }
             return null;
         }
@@ -275,21 +280,21 @@ namespace Collapser
 
         private int MoveFromTopToBottom(int currentXIndex, int currentYIndex, ref int lastFixedYIndex)
         {
-            if (_map[currentXIndex, currentYIndex].IsEmpty == false)
+            if (GetCell(currentXIndex, currentYIndex).IsEmpty == false)
             {
                 lastFixedYIndex = currentYIndex;
                 currentYIndex++;
                 return currentYIndex;
             }
 
-            if (_map[currentXIndex, currentYIndex + 1].IsEmpty)
+            if (GetCell(currentXIndex, currentYIndex + 1).IsEmpty)
             {
                 return ++currentYIndex;
             }
             
             bool previousAndLastFixedYAreDifferent = currentYIndex - 1 != lastFixedYIndex;
             var cellForSwappingTo = previousAndLastFixedYAreDifferent ? lastFixedYIndex + 1 : currentYIndex;
-            SwapBlockFromTo(_map[currentXIndex, currentYIndex + 1], _map[currentXIndex, cellForSwappingTo]);
+            SwapBlockFromTo(GetCell(currentXIndex, currentYIndex + 1), GetCell(currentXIndex, cellForSwappingTo));
             lastFixedYIndex = previousAndLastFixedYAreDifferent ? ++lastFixedYIndex : currentYIndex;
 
             return ++currentYIndex;
@@ -322,7 +327,7 @@ namespace Collapser
             {
                 for (int y = 0; y < _levelData.SizeY; y++)
                 {
-                    actionForCell(_map[x,y]);
+                    actionForCell(GetCell(x,y));
                 }
             }
         }
@@ -333,7 +338,7 @@ namespace Collapser
             {
                 for (int y = 0; y < _levelData.SizeY; y++)
                 {
-                    actionForCell(_map[x,y],x,y);
+                    actionForCell(GetCell(x,y),x,y);
                 }
             }
         }

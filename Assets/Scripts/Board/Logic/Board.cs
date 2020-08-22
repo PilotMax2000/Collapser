@@ -177,27 +177,17 @@ namespace Collapser
             return null;
         }
         
-        //TODO: remove, only for debug purpose
         private void LogMap()
         {
             Debug.Log("===========Reading Map============");
-            for (int y = 0; y < _levelData.SizeY; y++)
+            DoForEachCell((cell, x, y) =>
             {
-                for (int x = 0; x < _levelData.SizeX; x++)
-                {
-                    if (_map[x, y].IsEmpty)
-                    {
-                        Debug.Log($"[{x},{y}], Empty");
-                    }
-                    else
-                    {
-                        Debug.Log($"[{x},{y}] Color: {_map[x,y].Block.BlockParams.name}");
-                    }
-                   
-                }
-            }
+                string log = cell.IsEmpty ? $"[{x},{y}], Empty" : $"[{x},{y}] Color: {cell.Block.BlockParams.name}";
+                Debug.Log(log);
+            });
             Debug.Log("===========Finished Reading Map============");
         }
+
         
         void GeneratePathfindingGraph() {
             // Initialize the array
@@ -351,6 +341,17 @@ namespace Collapser
                 for (int y = 0; y < _levelData.SizeY; y++)
                 {
                     actionForCell(_map[x,y]);
+                }
+            }
+        }
+        
+        private void DoForEachCell(Action<Cell,int,int> actionForCell)
+        {
+            for (int x = 0; x < _levelData.SizeX; x++)
+            {
+                for (int y = 0; y < _levelData.SizeY; y++)
+                {
+                    actionForCell(_map[x,y],x,y);
                 }
             }
         }

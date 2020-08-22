@@ -134,7 +134,7 @@ namespace Collapser
             {
                 foreach (var cellPos in onDest.TargetBlocks)
                 {
-                    var cellWithTarget = GetCell(onDest.GetBoardPosDueToTargetOffset(cell.BoardPos, cellPos));
+                    var cellWithTarget = GetCell(onDest.GetBoardPosDueToTargetOffset(cell.BoardPos, cellPos), false);
                     if (cellWithTarget != null && resBlocks.Contains(cellWithTarget.Block) == false)
                     {
                         resBlocks.Add(cellWithTarget.Block);
@@ -144,7 +144,7 @@ namespace Collapser
             return resBlocks;
         }
 
-        public Cell GetCell(Vector2Int pos)
+        public Cell GetCell(Vector2Int pos, bool showLogs = true)
         {
             if(pos.x >= 0 && pos.x < _levelData.SizeX)
             {
@@ -153,7 +153,11 @@ namespace Collapser
                     return _map[pos.x, pos.y];
                 }
             }
-            Debug.LogError($"Cell for {pos} was not found in board map!");
+
+            if (showLogs)
+            {
+                Debug.LogError($"Cell for {pos} was not found in board map!");
+            }
             return null;
         }
         
@@ -244,52 +248,51 @@ namespace Collapser
             return foundBlocks;
         }
 
-        private void RemoveBlocks(List<Block> blocksToRemove)
+        private static void RemoveBlocks(List<Block> blocksToRemove)
         {
-            if (blocksToRemove != null && blocksToRemove.Count > 0)
+            if (blocksToRemove == null || blocksToRemove.Count <= 0)
             {
-                foreach (var block in blocksToRemove)
-                {
-                    block.Cell.RemoveBlock();
-                }
+                return;
+            }
+            foreach (var block in blocksToRemove)
+            {
+                block.Cell.RemoveBlock();
             }
         }
 
         private void GravitationSimulationShift()
         {
-            for (int x = 0; x < _levelData.SizeX; x++)
+            for (int currentXIndex = 0; currentXIndex < _levelData.SizeX; currentXIndex++)
             {
-                int lastFixedBlock = -1;
-                int currentIndex = 0;
-                while (currentIndex < _levelData.SizeY - 1)
+                int lastFixedYIndex = -1;
+                int currentYIndex = 0;
+                while (currentYIndex < _levelData.SizeY - 1)
                 {
-                    if (_map[x, currentIndex].IsEmpty == false)
-                    {
-                        lastFixedBlock = currentIndex;
-                        currentIndex++;
-                        continue;
-                    }
-                    
-                    if (_map[x, currentIndex].IsEmpty && _map[x, currentIndex+1].IsEmpty == false)
-                    {
-                        if (currentIndex - 1 != lastFixedBlock)
-                        {
-                            SwapBlockFromTo(_map[x, currentIndex+1], _map[x, lastFixedBlock+1]);
-                            lastFixedBlock++;
-                        }
-                        else
-                        {
-                            SwapBlockFromTo(_map[x, currentIndex+1], _map[x, currentIndex]);
-                            lastFixedBlock = currentIndex;
-                        }
-                        currentIndex++;
-                    }
-                    else if (_map[x, currentIndex].IsEmpty && _map[x, currentIndex+1].IsEmpty)
-                    {
-                        currentIndex++;
-                    }
+                    currentYIndex = MoveFromTopToBottom(currentXIndex, currentYIndex, ref lastFixedYIndex);
                 }
             }
+        }
+
+        private int MoveFromTopToBottom(int currentXIndex, int currentYIndex, ref int lastFixedYIndex)
+        {
+            if (_map[currentXIndex, currentYIndex].IsEmpty == false)
+            {
+                lastFixedYIndex = currentYIndex;
+                currentYIndex++;
+                return currentYIndex;
+            }
+
+            if (_map[currentXIndex, currentYIndex + 1].IsEmpty)
+            {
+                return ++currentYIndex;
+            }
+            
+            bool previousAndLastFixedYAreDifferent = currentYIndex - 1 != lastFixedYIndex;
+            var cellForSwappingTo = previousAndLastFixedYAreDifferent ? lastFixedYIndex + 1 : currentYIndex;
+            SwapBlockFromTo(_map[currentXIndex, currentYIndex + 1], _map[currentXIndex, cellForSwappingTo]);
+            lastFixedYIndex = previousAndLastFixedYAreDifferent ? ++lastFixedYIndex : currentYIndex;
+
+            return ++currentYIndex;
         }
 
         private void SwapBlockFromTo(Cell fromCell, Cell toCell)

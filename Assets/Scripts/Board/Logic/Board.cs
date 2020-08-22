@@ -188,28 +188,24 @@ namespace Collapser
         private void GeneratePathfindingGraph() 
         {
             _graph = new Node[_levelData.SizeX,_levelData.SizeY];
+
+            DoForEachCell((cell, x, y) =>
+            {
+                _graph[x,y] = new Node(new Vector2Int(x,y));
+            });
             
-            for(int x=0; x < _levelData.SizeX; x++) {
-                for(int y=0; y < _levelData.SizeY; y++) {
-                    _graph[x,y] = new Node(new Vector2Int(x,y));
-                }
-            }
-
-            // Now that all the nodes exist, calculate their neighbours
-            for(int x=0; x < _levelData.SizeX; x++) {
-                for(int y=0; y < _levelData.SizeY; y++) {
-
-                    // This is the 4-way connection version:
-				if(x > 0)
-					_graph[x,y].Neighbours.Add( _graph[x-1, y] );
-				if(x < _levelData.SizeX-1)
-					_graph[x,y].Neighbours.Add( _graph[x+1, y] );
-				if(y > 0)
-					_graph[x,y].Neighbours.Add( _graph[x, y-1] );
-				if(y < _levelData.SizeY-1)
-					_graph[x,y].Neighbours.Add( _graph[x, y+1] );
-                }
-            }
+            DoForEachCell((cell, x, y) =>
+            {
+                if(x > 0)
+                    _graph[x,y].Neighbours.Add( _graph[x-1, y] );
+                if(x < _levelData.SizeX-1)
+                    _graph[x,y].Neighbours.Add( _graph[x+1, y] );
+                if(y > 0)
+                    _graph[x,y].Neighbours.Add( _graph[x, y-1] );
+                if(y < _levelData.SizeY-1)
+                    _graph[x,y].Neighbours.Add( _graph[x, y+1] );
+            });
+            
             Debug.Log($"Pathfinding graph was loaded successfully, size {_levelData.SizeX}x{_levelData.SizeY}");
         }
 

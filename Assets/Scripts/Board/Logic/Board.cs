@@ -26,7 +26,7 @@ namespace Collapser
 
         public void Init()
         {
-            GenerateMap();
+            GenerateLevelMap();
             GeneratePathfindingGraph();
             Debug.Log("Logic board was successfuly generated.");
             LogMap();
@@ -37,13 +37,12 @@ namespace Collapser
             _boardsBridge.GenerateVisualMap();
         }
 
-        private void GenerateMap()
+        private void GenerateLevelMap()
         {
             _map = new Cell[_levelData.SizeX,_levelData.SizeY];
-            
-            //TODO:remove after map functionality
             int mapLoaderCounter = 0;
                 
+            //TODO: move out matrix search
             for (int y = 0; y < _levelData.SizeY; y++)
             {
                 for (int x = 0; x < _levelData.SizeX; x++)
@@ -56,10 +55,10 @@ namespace Collapser
             }
             Debug.Log($"Map was generated successfully for logical board, size {_levelData.SizeX}x{_levelData.SizeY}");
         }
+        
 
         public void OnClickReaction(Cell clickedCell)
         {
-            //TODO:OnClickDestructioin parse
             var listToDestruction = GetBlocksForDestruction(clickedCell);
             if (listToDestruction == null || listToDestruction.Count <= 0)
             {
@@ -70,6 +69,7 @@ namespace Collapser
             LogMap();
             GenerateNewBlocks();
             LogMap();
+            
             _boardsBridge.RunVisualActions();
 
         }
@@ -330,34 +330,33 @@ namespace Collapser
             _boardsBridge.VisualActionSwapBlocks(fromCell.BoardPos, toCell.BoardPos);
         }
 
-        private void DoForEachCell(Action<int,int> test)
-        {
-            for (int y = 0; y < _levelData.SizeY-1; y++)
-            {
-                for (int x = 0; x < _levelData.SizeX; x++)
-                {
-                    //TODO:fix this - will work only if EVERY cell has block (no empty/dead cells on level)
-                    if (_map[x, y].IsEmpty)
-                    {
-                        SwapBlockFromTo(_map[x, y+1], _map[x, y]);
-                    }
-                }
-            }
-        }
-
         private void GenerateNewBlocks()
         {
-            for (int y = 0; y < _levelData.SizeY; y++)
+            DoForEachCell(GenerateNewBlock);
+        }
+
+
+        private void GenerateNewBlock(Cell cell)
+        {
+            if (cell.IsEmpty)
             {
-                for (int x = 0; x < _levelData.SizeX; x++)
+                cell.SetNewBlock(_levelData.BlocksToSpawn.GetRandomBlock(), false);
+            }
+        }
+        
+        private void DoForEachCell(Action<Cell> actionForCell)
+        {
+            for (int x = 0; x < _levelData.SizeX; x++)
+            {
+                for (int y = 0; y < _levelData.SizeY; y++)
                 {
-                    if (_map[x, y].IsEmpty)
-                    {
-                        _map[x,y].SetNewBlock(_levelData.BlocksToSpawn.GetRandomBlock(), false);
-                    }
+                    actionForCell(_map[x,y]);
                 }
             }
         }
+        
+        
+        
     }
 }
 

@@ -16,8 +16,7 @@ namespace Collapser
         [SerializeField] private VisualBlock _blockPref;
 
         private VisualCell[,] _visualCells;
-        private Cell[,] _cells;
-        
+
         [Header("Bridge")] 
         [SerializeField] private BoardsBridge _boardsBridge;
         

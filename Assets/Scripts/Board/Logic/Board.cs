@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -31,7 +30,7 @@ namespace Collapser
             LogMap();
         }
         
-        void Start()
+        private void Start()
         {
             _boardsBridge.GenerateVisualMap();
         }
@@ -40,8 +39,7 @@ namespace Collapser
         {
             Map = new Cell[_levelData.SizeX,_levelData.SizeY];
             int mapLoaderCounter = 0;
-                
-            //TODO: move out matrix search
+            
             for (int y = 0; y < _levelData.SizeY; y++)
             {
                 for (int x = 0; x < _levelData.SizeX; x++)
@@ -58,7 +56,7 @@ namespace Collapser
 
         public void OnClickReaction(Cell clickedCell)
         {
-            var listToDestruction = GetBlocksForDestruction(clickedCell);
+            var listToDestruction = GetBlocksForRemoval(clickedCell);
             if (listToDestruction == null || listToDestruction.Count <= 0)
             {
                 return;
@@ -73,7 +71,7 @@ namespace Collapser
 
         }
 
-        private List<Block> GetBlocksForDestruction(Cell cell)
+        private List<Block> GetBlocksForRemoval(Cell cell)
         {
             if (cell.Block == null || cell.Block.BlockParams == null)
             {
@@ -81,66 +79,76 @@ namespace Collapser
                 return null;
             }
             
-            
             var onDest = cell.Block.BlockParams.OnClickDestruction;
-            
-            //Generate list of target blocks to targets
 
-            if (onDest.LinkOtherBlocksByColor && onDest.TargetBlocks != null && onDest.TargetBlocks.Count > 0)
+            if (onDest.LinkOtherBlocksByColor)
             {
-                var target0 = GetCell(onDest.GetBoardPosDueToTargetOffset(cell.BoardPos, onDest.TargetBlocks[0]));
-                
-                if (target0 == null)
-                {
-                    Debug.LogError($"Target0 color was not fount on board, pos {target0.BoardX},{target0.BoardY}");
-                    return null;
-                }
-                
-                if (target0.Block == null || target0.Block.BlockParams == null ||
-                    target0.Block.BlockParams.Color == null)
-                {
-                    Debug.LogError($"Target0 color was not fount, pos {target0.BoardX},{target0.BoardY}");
-                    return null;
-                }
-                
-                //Currently for linking only use info of first element
-                var linkedBlocks = onDest.OverrideTargetColor == null
-                    ? SearchColorLink(target0.Block) 
-                    : SearchColorLink(target0.Block, onDest.OverrideTargetColor);
-
-                if (linkedBlocks != null && linkedBlocks.Count >= onDest.MinLinkingNumber)
-                {
-                    return linkedBlocks;
-                }
-                Debug.Log("Not enought blocks for destruction. Will return null");
-                return null;
+                return GetColoredLinedBlocks(cell);
             }
-            
+
             List<Block> resBlocks = new List<Block>();
             if (onDest.TargetAllBoard)
             {
-                foreach (var cellWithProperColor in _mapAsList)
+                DoForEachCell((c) =>
                 {
-                    if (cellWithProperColor.Block.BlockParams.Color != null &&
-                        cellWithProperColor.Block.BlockParams.Color == onDest.OverrideTargetColor)
+                    BlockColor col = c.Block.BlockParams.Color;
+                    if (col != null && col == onDest.OverrideTargetColor)
                     {
-                        resBlocks.Add(cellWithProperColor.Block);
+                        resBlocks.Add(c.Block);
                     }
-                }
+                });
+            }
+
+            if (onDest.TargetBlocks == null || onDest.TargetBlocks.Count <= 0)
+            {
+                return resBlocks;
             }
             
-            if (onDest.TargetBlocks != null && onDest.TargetBlocks.Count > 0)
+            foreach (var cellPos in onDest.TargetBlocks)
             {
-                foreach (var cellPos in onDest.TargetBlocks)
+                var cellWithTarget = GetCell(onDest.GetBoardPosDueToTargetOffset(cell.BoardPos, cellPos), false);
+                if (cellWithTarget != null && resBlocks.Contains(cellWithTarget.Block) == false)
                 {
-                    var cellWithTarget = GetCell(onDest.GetBoardPosDueToTargetOffset(cell.BoardPos, cellPos), false);
-                    if (cellWithTarget != null && resBlocks.Contains(cellWithTarget.Block) == false)
-                    {
-                        resBlocks.Add(cellWithTarget.Block);
-                    }
+                    resBlocks.Add(cellWithTarget.Block);
                 }
             }
             return resBlocks;
+        }
+
+        private List<Block> GetColoredLinedBlocks(Cell cell)
+        {
+            var onDest = cell.Block.BlockParams.OnClickDestruction;
+            if (onDest.TargetBlocks != null && onDest.TargetBlocks.Count <= 0)
+            {
+                Debug.Log("No target was selected for color linking");
+                return null;
+            }
+            
+            var target0 = GetCell(onDest.GetBoardPosDueToTargetOffset(cell.BoardPos, onDest.TargetBlocks[0]));
+                
+            if (target0 == null)
+            {
+                Debug.LogError($"Target0 was not fount on board, pos {cell.BoardPos}");
+                return null;
+            }
+                
+            if (target0.IsEmpty || target0.Block.BlockParams.Color == null)
+            {
+                Debug.LogError($"Target0 color was not fount, pos {target0.BoardX},{target0.BoardY}");
+                return null;
+            }
+                
+            //Currently for linking only use info of first element
+            var linkedBlocks = onDest.OverrideTargetColor == null
+                ? SearchColorLink(target0.Block) 
+                : SearchColorLink(target0.Block, onDest.OverrideTargetColor);
+
+            if (linkedBlocks != null && linkedBlocks.Count >= onDest.MinLinkingNumber)
+            {
+                return linkedBlocks;
+            }
+            Debug.Log("Not enough blocks for destruction. Will return null");
+            return null;
         }
 
         public Cell GetCell(Vector2Int pos, bool showLogs = true)

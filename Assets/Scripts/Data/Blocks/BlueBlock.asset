@@ -9,7 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cfdcd775e22579c46907b2d6c81df35b, type: 3}
+  m_Script: {fileID: 11500000, guid: d908b62b1fd477b4d81459c252c48bbc, type: 3}
   m_Name: BlueBlock
   m_EditorClassIdentifier: 
   Color: {fileID: 11400000, guid: d283c27ff84b30544b86005aeb04aeb7, type: 2}

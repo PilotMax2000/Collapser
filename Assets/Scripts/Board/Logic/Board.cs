@@ -11,10 +11,10 @@ namespace Collapser
 
         [Header("Bridge")] 
         [SerializeField] private BoardsBridge _boardsBridge;
-
-        private Node[,] _graph;
-
         public Cell[,] Map { get; private set; }
+        
+        private Node[,] _graph;
+        
 
         private void Awake()
         {

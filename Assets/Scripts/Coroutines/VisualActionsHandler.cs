@@ -7,20 +7,12 @@ namespace Collapser
 {
     public class VisualActionsHandler : MonoBehaviour
     {
-        private CoroutineQueue _actionsQueue;
         [SerializeField] private BoardsBridge _bridge;
+        private CoroutineQueue _actionsQueue;
         private void Awake()
         {
             _actionsQueue = new CoroutineQueue(1, StartCoroutine);
             _bridge.InitVisualActionHandler(this);
-        }
-
-        private void Start() {
-            // //TODO: remove after adding start screen
-            // _actionsQueue.Run(WaitAndDo(delegate{}, 1.0f));
-            // _actionsQueue.Run(WaitAndDo(() => Debug.LogError("!!!!!"), 1.0f));
-            // _actionsQueue.Run(WaitAndDo(() => Debug.LogError("@@@@@@"), 1.0f));
-            // _actionsQueue.Run(WaitAndDo(() => Debug.LogError("______"), 1.0f));
         }
 
         public  void DoAndWait(Queue<Action> actions, float time)
@@ -33,30 +25,25 @@ namespace Collapser
                 }
             }, time));
         }
-        
-        public  void DoAndWaitSingle(Action action, float time)
-        {
-            _actionsQueue.Run(DoAndWait(action, time));
-        }
 
         public void DoWithoutWaiting(Action action)
         {
             _actionsQueue.Run(Do(action));
         }
         
-        private IEnumerator DoAndWait(System.Action task, float time)
+        private static IEnumerator DoAndWait(System.Action task, float time)
         {
             task();
             yield return new WaitForSeconds(time);
         }
 
-        private IEnumerator WaitAndDo(System.Action task, float time)
+        private static IEnumerator WaitAndDo(System.Action task, float time)
         {
             yield return new WaitForSeconds(time);
             task();
         }
 
-        private IEnumerator Do(System.Action task)
+        private static IEnumerator Do(System.Action task)
         {
             task();
             yield break;

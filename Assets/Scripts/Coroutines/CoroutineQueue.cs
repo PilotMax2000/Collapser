@@ -25,12 +25,12 @@ namespace Collapser
             {
                 throw new ArgumentException("Must be at least one", "maxActive");
             }
-            this._maxActive = maxActive;
-            this._coroutineStarter = coroutineStarter;
+            _maxActive = maxActive;
+            _coroutineStarter = coroutineStarter;
             _queue = new Queue<IEnumerator>();
         }
 
-        // if the number of active coroutines if sunder the limit specified in the counstructor, run the given coroutine.
+        // if the number of active coroutines if under the limit specified in the counstructor, run the given coroutine.
         //...Otherwise, queue it to be run when other coroutines finish.
         public void Run(IEnumerator coroutine)
         {

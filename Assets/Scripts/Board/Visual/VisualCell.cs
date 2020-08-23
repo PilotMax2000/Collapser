@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using DG.Tweening;
+﻿using DG.Tweening;
 using UnityEngine;
 
 namespace Collapser
 {
     public class VisualCell : MonoBehaviour
     {
-        private Vector2Int _boardPos;
         [SerializeField] private VisualBlock _visualBlock;
         [SerializeField] private BoardsBridge _boardsBridge;
 
@@ -16,6 +12,8 @@ namespace Collapser
         [SerializeField] private BoolVariable _isBlockingInput;
         [SerializeField] private FloatVariable _globalAnimationDuration;
         public VisualBlock VisualBlock => _visualBlock;
+        
+        private Vector2Int _boardPos;
 
         public void Init(Cell cell)
         {

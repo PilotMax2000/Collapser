@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using DG.Tweening;
+﻿using DG.Tweening;
 using UnityEngine;
 
 namespace Collapser
@@ -15,14 +12,14 @@ namespace Collapser
         [SerializeField] private VisualCell _cellPref;
         [SerializeField] private VisualBlock _blockPref;
 
-        private VisualCell[,] _visualCells;
-
         [Header("Bridge")] 
         [SerializeField] private BoardsBridge _boardsBridge;
-        
+
         [Header("Settings")] 
         [SerializeField] private BoolVariable _isBlockingInput;
         [SerializeField] private FloatVariable _globalAnimationDuration;
+        
+        private VisualCell[,] _visualCells;
 
         private void Awake()
         {
@@ -39,9 +36,7 @@ namespace Collapser
             _sizeX = boardCells.GetLength(0);
             _sizeY = boardCells.GetLength(1);
             _visualCells = new VisualCell[_sizeX,_sizeY];
-            
-            
-            
+
             for (int x = 0; x < _sizeX; x++)
             {
                 for (int y = 0; y < _sizeY; y++)
@@ -57,11 +52,12 @@ namespace Collapser
                     block.Init(boardCells[x,y].Block);
                     
                     cell.SetBlock(block, false);
-                    //Create Block
                 }
             }
             
+            //Center the level map on the game screen
             transform.localPosition = new Vector2(-(_sizeX-1)/2.0f, -(_sizeY-1)/2.0f);
+            
             BlockPlayersInput(false);
             Debug.Log($"Visual map was generated, size{_sizeX}x{_sizeY}");
         }

@@ -13,7 +13,6 @@ namespace Collapser
         [SerializeField] private BoardsBridge _boardsBridge;
 
         private Node[,] _graph;
-        private readonly List<Cell> _mapAsList = new List<Cell>();
 
         public Cell[,] Map { get; private set; }
 
@@ -46,7 +45,6 @@ namespace Collapser
                 {
                     Map[x,y] = new Cell(new Vector2Int(x,y), _boardsBridge);
                     Map[x,y].SetNewBlock(_levelData.StartMapToLoad[mapLoaderCounter]);
-                    _mapAsList.Add(Map[x,y]);
                     mapLoaderCounter++;
                 }
             }
@@ -68,7 +66,6 @@ namespace Collapser
             LogMap();
             
             _boardsBridge.RunVisualActions();
-
         }
 
         private List<Block> GetBlocksForRemoval(Cell cell)
@@ -158,21 +155,9 @@ namespace Collapser
 
         private Cell GetCell(int x, int y, bool showLogs = true)
         {
-            if(x >= 0 && x < _levelData.SizeX)
-            {
-                if (y >= 0 && y < _levelData.SizeY)
-                {
-                    return Map[x, y];
-                }
-            }
-
-            if (showLogs)
-            {
-                Debug.LogError($"Cell for {x},{y} was not found in board map!");
-            }
-            return null;
+            return BoardSearch.GetCell(x, y, _levelData, Map, showLogs);
         }
-        
+
         private void LogMap()
         {
             Debug.Log("===========Reading Map============");
@@ -187,26 +172,7 @@ namespace Collapser
         
         private void GeneratePathfindingGraph() 
         {
-            _graph = new Node[_levelData.SizeX,_levelData.SizeY];
-
-            DoForEachCell((cell, x, y) =>
-            {
-                _graph[x,y] = new Node(new Vector2Int(x,y));
-            });
-            
-            DoForEachCell((cell, x, y) =>
-            {
-                if(x > 0)
-                    _graph[x,y].Neighbours.Add( _graph[x-1, y] );
-                if(x < _levelData.SizeX-1)
-                    _graph[x,y].Neighbours.Add( _graph[x+1, y] );
-                if(y > 0)
-                    _graph[x,y].Neighbours.Add( _graph[x, y-1] );
-                if(y < _levelData.SizeY-1)
-                    _graph[x,y].Neighbours.Add( _graph[x, y+1] );
-            });
-            
-            Debug.Log($"Pathfinding graph was loaded successfully, size {_levelData.SizeX}x{_levelData.SizeY}");
+            _graph = BoardSearch.GeneratePathfindingGraph(_levelData, Map);
         }
 
         private List<Block> SearchColorLink(Block block, BlockColor useOtherColor = null)
@@ -322,13 +288,7 @@ namespace Collapser
         
         private void DoForEachCell(Action<Cell,int,int> actionForCell)
         {
-            for (int x = 0; x < _levelData.SizeX; x++)
-            {
-                for (int y = 0; y < _levelData.SizeY; y++)
-                {
-                    actionForCell(GetCell(x,y),x,y);
-                }
-            }
+            BoardSearch.DoForEachCell(actionForCell, _levelData, Map);
         }
     }
 }

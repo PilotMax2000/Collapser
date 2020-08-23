@@ -83,33 +83,7 @@ namespace Collapser
                 return GetColoredLinedBlocks(cell);
             }
 
-            List<Block> resBlocks = new List<Block>();
-            if (onDest.TargetAllBoard)
-            {
-                DoForEachCell((c) =>
-                {
-                    BlockColor col = c.Block.BlockParams.Color;
-                    if (col != null && col == onDest.OverrideTargetColor)
-                    {
-                        resBlocks.Add(c.Block);
-                    }
-                });
-            }
-
-            if (onDest.TargetBlocks == null || onDest.TargetBlocks.Count <= 0)
-            {
-                return resBlocks;
-            }
-            
-            foreach (var cellPos in onDest.TargetBlocks)
-            {
-                var cellWithTarget = GetCell(onDest.GetBoardPosDueToTargetOffset(cell.BoardPos, cellPos), false);
-                if (cellWithTarget != null && resBlocks.Contains(cellWithTarget.Block) == false)
-                {
-                    resBlocks.Add(cellWithTarget.Block);
-                }
-            }
-            return resBlocks;
+            return BoardSearch.GetTargetBlocksForRemoval(cell, onDest, _levelData, Map);
         }
 
         private List<Block> GetColoredLinedBlocks(Cell cell)
@@ -121,7 +95,7 @@ namespace Collapser
                 return null;
             }
             
-            var target0 = GetCell(onDest.GetBoardPosDueToTargetOffset(cell.BoardPos, onDest.TargetBlocks[0]));
+            var target0 = GetCell(BoardSearch.GetPosDueToTargetOffset(cell.BoardPos, onDest.TargetBlocks[0]));
                 
             if (target0 == null)
             {
